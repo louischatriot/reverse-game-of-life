@@ -125,6 +125,13 @@ def find_predecessor(goal):
 
     print_grid(goal)
 
+
+    goal[0] = goal[2]
+
+    print_grid(goal)
+
+    # 1/0
+
     # Working on the first line
 
     pos_lines = nw[goal[0][0]]
@@ -162,13 +169,14 @@ def find_predecessor(goal):
         # print_grid(t)
 
         u = next(t)
+        print(u[0])
         # print_grid(u)
 
-        if sum(u[0]) != 0:
-            print("NOOOOOES")
-            print_grid(t)
-            print_grid(u)
-            1/0
+        # if sum(u[0]) != 0:
+            # print("NOOOOOES")
+            # print_grid(t)
+            # print_grid(u)
+            # 1/0
 
 
 
