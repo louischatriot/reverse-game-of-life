@@ -1,4 +1,5 @@
 from data import nw, ne, sw, se, w, n, e, s, center
+import time
 
 
 def print_grid(input):
@@ -63,44 +64,6 @@ def next(input):
     return output
 
 
-
-# cells = generate_all_predecessors(3, 3)
-
-# res = [[], []]
-# for c in cells:
-    # n = get_neighbors(c, 1, 1)
-    # if n == 3:
-        # res[1].append(c)
-    # elif n == 2:
-        # res[c[1][1]].append(c)
-    # else:
-        # res[0].append(c)
-
-# print(res)
-
-
-
-# for c in res[1]:
-    # # print_grid(c)
-    # # print_grid(next(c))
-    # print(next(c)[1][1])
-
-# 1/0
-
-
-
-
-
-# for c in w[1]:
-    # # print_grid(next(c))
-    # print(next(c)[1][0])
-
-
-# 1/0
-
-
-
-
 # total_merge means we arrive at the end of the line so we don't increase grid length
 def merge_possibility_in_line(pos_lines, cells, total_merge = False):
     N = len(cells[0])
@@ -137,7 +100,10 @@ def merge_lines(lines1, lines2, total_merge = False):
         for l2 in lines2:
             if l1[-2] == l2[0] and l1[-1] == l2[1]:
                 l = [_l for _l in l1]
-                l.append(l2[2])
+
+                if not total_merge:
+                    l.append(l2[2])
+
                 res.append(l)
 
     return res
@@ -153,15 +119,6 @@ def find_predecessor(goal):
     N += 2
     M += 2
 
-    print_grid(goal)
-
-
-    # goal[0] = goal[2]
-
-    # print_grid(goal)
-
-    # 1/0
-
     # First line
     pos_lines = nw[goal[0][0]]
 
@@ -172,8 +129,6 @@ def find_predecessor(goal):
 
     cells = ne[goal[0][-1]]
     pos_lines = merge_possibility_in_line(pos_lines, cells, True)
-
-    print(len(pos_lines))
 
     # Next lines except the last
     for i in range(1, N - 1):
@@ -189,24 +144,27 @@ def find_predecessor(goal):
         # Merge the next line
         pos_lines = merge_lines(pos_lines, lines)
 
-        print(len(pos_lines))
+    # Last line
+    lines = sw[goal[-1][0]]
+
+    for j in range(1, M - 1):
+        cells = s[goal[-1][j]]
+        lines = merge_possibility_in_line(lines, cells)
 
 
+    cells = se[goal[-1][-1]]
+    lines = merge_possibility_in_line(lines, cells, True)
 
-    for t in pos_lines:
-        # t = pos_lines[500]
+    # Merge the last line
+    pos_lines = merge_lines(pos_lines, lines, True)
 
-        # print_grid(t)
+    # Return first solution if any
+    if len(pos_lines) == 0:
+        return None
+    else:
+        return pos_lines[0]
 
-        u = next(t)
-        print(u[3])
-        # print_grid(u)
 
-        # if sum(u[0]) != 0:
-            # print("NOOOOOES")
-            # print_grid(t)
-            # print_grid(u)
-            # 1/0
 
 
 
@@ -218,8 +176,18 @@ goal = [
 ]
 
 
-find_predecessor(goal)
+start = time.time()
 
+res = find_predecessor(goal)
+
+duration = time.time() - start
+print(f"===> Duration: {duration}")
+
+
+
+print_grid(goal)
+print_grid(res)
+print_grid(next(res))
 
 
 
