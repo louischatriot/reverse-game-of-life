@@ -64,15 +64,15 @@ def next(input):
 
 
 
-# cells = generate_all_predecessors(2, 2)
+# cells = generate_all_predecessors(3, 3)
 
 # res = [[], []]
 # for c in cells:
-    # n = get_neighbors(c, 0, 1)
+    # n = get_neighbors(c, 1, 1)
     # if n == 3:
         # res[1].append(c)
     # elif n == 2:
-        # res[c[0][1]].append(c)
+        # res[c[1][1]].append(c)
     # else:
         # res[0].append(c)
 
@@ -81,8 +81,9 @@ def next(input):
 
 
 # for c in res[1]:
-    # print_grid(c)
+    # # print_grid(c)
     # # print_grid(next(c))
+    # print(next(c)[1][1])
 
 # 1/0
 
@@ -90,8 +91,9 @@ def next(input):
 
 
 
-# for c in ne[1]:
-    # print_grid(next(c))
+# for c in w[1]:
+    # # print_grid(next(c))
+    # print(next(c)[1][0])
 
 
 # 1/0
@@ -101,16 +103,29 @@ def next(input):
 
 # total_merge means we arrive at the end of the line so we don't increase grid length
 def merge_possibility_in_line(pos_lines, cells, total_merge = False):
+    N = len(cells[0])
     res = []
 
-    for c in cells:
-        for l in pos_lines:
-            if l[0][-2] == c[0][0] and l[0][-1] == c[0][1] and l[1][-2] == c[1][0] and l[1][-1] == c[1][1]:
-                if not total_merge:
-                    _l = [l[0] + [c[0][2]], l[1] + [c[1][2]]]
-                    res.append(_l)
-                else:
-                    res.append(l)
+    # Checking N like this is ugly
+    if N == 2:
+        for c in cells:
+            for l in pos_lines:
+                if l[0][-2] == c[0][0] and l[0][-1] == c[0][1] and l[1][-2] == c[1][0] and l[1][-1] == c[1][1]:
+                    if not total_merge:
+                        _l = [l[0] + [c[0][2]], l[1] + [c[1][2]]]
+                        res.append(_l)
+                    else:
+                        res.append(l)
+
+    if N == 3:
+        for c in cells:
+            for l in pos_lines:
+                if l[0][-2] == c[0][0] and l[0][-1] == c[0][1] and l[1][-2] == c[1][0] and l[1][-1] == c[1][1] and l[2][-2] == c[2][0] and l[2][-1] == c[2][1]:
+                    if not total_merge:
+                        _l = [l[0] + [c[0][2]], l[1] + [c[1][2]], l[2] + [c[2][2]]]
+                        res.append(_l)
+                    else:
+                        res.append(l)
 
     return res
 
@@ -126,42 +141,38 @@ def find_predecessor(goal):
     print_grid(goal)
 
 
-    goal[0] = goal[2]
+    # goal[0] = goal[2]
 
-    print_grid(goal)
+    # print_grid(goal)
 
     # 1/0
 
-    # Working on the first line
+    # First line
+    # pos_lines = nw[goal[0][0]]
 
-    pos_lines = nw[goal[0][0]]
+    # for j in range(1, M - 1):
+        # cells = n[goal[0][j]]
+        # pos_lines = merge_possibility_in_line(pos_lines, cells)
 
-    print(len(pos_lines))
 
+    # cells = ne[goal[0][-1]]
+    # pos_lines = merge_possibility_in_line(pos_lines, cells, True)
 
-    for i in range(1, M - 1):
+    # Next lines except the last
+    i = 1
+    pos_lines = w[goal[i][0]]
 
-        # print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        # print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        # print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-
-        cells = n[goal[0][i]]
-
+    for j in range(1, M - 1):
+        cells = center[goal[i][j]]
         pos_lines = merge_possibility_in_line(pos_lines, cells)
 
-        print(len(pos_lines))
-
-        # if len(pos_lines) > 30:
-            # 1/0
-
-        # print(len(pos_lines))
-
-    cells = ne[goal[0][-1]]
-
+    cells = e[goal[i][-1]]
     pos_lines = merge_possibility_in_line(pos_lines, cells, True)
+
 
     print(len(pos_lines))
 
+    1/0
 
     for t in pos_lines:
         # t = pos_lines[500]
@@ -169,7 +180,7 @@ def find_predecessor(goal):
         # print_grid(t)
 
         u = next(t)
-        print(u[0])
+        print(u[1])
         # print_grid(u)
 
         # if sum(u[0]) != 0:
