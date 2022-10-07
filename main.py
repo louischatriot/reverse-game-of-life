@@ -130,6 +130,21 @@ def merge_possibility_in_line(pos_lines, cells, total_merge = False):
     return res
 
 
+def merge_lines(lines1, lines2, total_merge = False):
+    res = []
+
+    for l1 in lines1:
+        for l2 in lines2:
+            if l1[-2] == l2[0] and l1[-1] == l2[1]:
+                l = [_l for _l in l1]
+                l.append(l2[2])
+                res.append(l)
+
+    return res
+
+
+
+
 def find_predecessor(goal):
     N = len(goal)
     M = len(goal[0])
@@ -148,31 +163,35 @@ def find_predecessor(goal):
     # 1/0
 
     # First line
-    # pos_lines = nw[goal[0][0]]
-
-    # for j in range(1, M - 1):
-        # cells = n[goal[0][j]]
-        # pos_lines = merge_possibility_in_line(pos_lines, cells)
-
-
-    # cells = ne[goal[0][-1]]
-    # pos_lines = merge_possibility_in_line(pos_lines, cells, True)
-
-    # Next lines except the last
-    i = 1
-    pos_lines = w[goal[i][0]]
+    pos_lines = nw[goal[0][0]]
 
     for j in range(1, M - 1):
-        cells = center[goal[i][j]]
+        cells = n[goal[0][j]]
         pos_lines = merge_possibility_in_line(pos_lines, cells)
 
-    cells = e[goal[i][-1]]
-    pos_lines = merge_possibility_in_line(pos_lines, cells, True)
 
+    cells = ne[goal[0][-1]]
+    pos_lines = merge_possibility_in_line(pos_lines, cells, True)
 
     print(len(pos_lines))
 
-    1/0
+    # Next lines except the last
+    for i in range(1, N - 1):
+        lines = w[goal[i][0]]
+
+        for j in range(1, M - 1):
+            cells = center[goal[i][j]]
+            lines = merge_possibility_in_line(lines, cells)
+
+        cells = e[goal[i][-1]]
+        lines = merge_possibility_in_line(lines, cells, True)
+
+        # Merge the next line
+        pos_lines = merge_lines(pos_lines, lines)
+
+        print(len(pos_lines))
+
+
 
     for t in pos_lines:
         # t = pos_lines[500]
@@ -180,7 +199,7 @@ def find_predecessor(goal):
         # print_grid(t)
 
         u = next(t)
-        print(u[1])
+        print(u[3])
         # print_grid(u)
 
         # if sum(u[0]) != 0:
