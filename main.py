@@ -128,75 +128,20 @@ def find_predecessor(goal):
         pos.append([w[goal[i][0]]] + [center[goal[i][j]] for j in range(1, M - 1)] + [e[goal[i][-1]]])
     pos.append([sw[goal[-1][0]]] + [s[goal[-1][j]] for j in range(1, M - 1)] + [se[goal[-1][-1]]])
 
-
+    # Calculating line by line
     for i in range(0, N):
         lines = pos[i][0]
 
         for j in range(1, M):
             lines = merge_possibility_in_line(lines, pos[i][j], True if j == M - 1 else False)
 
-        print("Lines: " + str(len(lines)))
-
-
         if i == 0:
-            pos_lines = [lines[i] for i in range(0, len(lines))]
+            pos_lines = [[l for l in lines[i]] for i in range(0, len(lines))]
         else:
-            pos_lines = merge_lines(pos_lines, lines)
+            pos_lines = merge_lines(pos_lines, lines, True if i == N - 1 else False)
 
-
-        print(len(lines))
-
-    1/0
-
-
-
-
-    # First line
-    pos_lines = nw[goal[0][0]]
-
-    for j in range(1, M - 1):
-        cells = n[goal[0][j]]
-        pos_lines = merge_possibility_in_line(pos_lines, cells)
-
-
-    cells = ne[goal[0][-1]]
-    pos_lines = merge_possibility_in_line(pos_lines, cells, True)
-
-    print(len(pos_lines))
-
-    # Next lines except the last
-    for i in range(1, N - 1):
-        lines = w[goal[i][0]]
-
-        for j in range(1, M - 1):
-            cells = center[goal[i][j]]
-            lines = merge_possibility_in_line(lines, cells)
-
-        cells = e[goal[i][-1]]
-        lines = merge_possibility_in_line(lines, cells, True)
-
-        # Merge the next line
-        pos_lines = merge_lines(pos_lines, lines)
 
         print(len(pos_lines))
-
-
-    # Last line
-    lines = sw[goal[-1][0]]
-
-    for j in range(1, M - 1):
-        cells = s[goal[-1][j]]
-        lines = merge_possibility_in_line(lines, cells)
-
-
-    cells = se[goal[-1][-1]]
-    lines = merge_possibility_in_line(lines, cells, True)
-
-    # Merge the last line
-    pos_lines = merge_lines(pos_lines, lines, True)
-
-    print(len(pos_lines))
-
 
     # Return first solution if any
     if len(pos_lines) == 0:
@@ -214,6 +159,13 @@ goal = [
     [1, 1, 1, 1, 0],
     [0, 0, 1, 1, 1]
 ]
+
+
+# goal = [
+    # [1, 1, 1, 1, 1],
+    # [1, 1, 1, 1, 1],
+    # [1, 1, 1, 1, 1]
+# ]
 
 
 start = time.time()
