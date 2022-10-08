@@ -65,6 +65,11 @@ def next(input):
 
 
 def check_cols(N, l, c):
+    # print(N)
+    # print(l)
+    # print(c)
+
+
     for i in range(0, N):
         if l[i][-2] != c[i][0]:
             return False
@@ -111,8 +116,6 @@ def merge_lines(lines1, lines2, total_merge = False):
     return res
 
 
-
-
 def find_predecessor(goal):
     N = len(goal)
     M = len(goal[0])
@@ -129,25 +132,51 @@ def find_predecessor(goal):
     pos.append([sw[goal[-1][0]]] + [s[goal[-1][j]] for j in range(1, M - 1)] + [se[goal[-1][-1]]])
 
     # Calculating line by line
-    for i in range(0, N):
-        lines = pos[i][0]
+    # for i in range(0, N):
+        # lines = pos[i][0]
 
-        for j in range(1, M):
-            lines = merge_possibility_in_line(lines, pos[i][j], True if j == M - 1 else False)
+        # for j in range(1, M):
+            # lines = merge_possibility_in_line(lines, pos[i][j], True if j == M - 1 else False)
 
-        if i == 0:
-            pos_lines = [[l for l in lines[i]] for i in range(0, len(lines))]
-        else:
-            pos_lines = merge_lines(pos_lines, lines, True if i == N - 1 else False)
+        # if i == 0:
+            # pos_grids = [[l for l in lines[i]] for i in range(0, len(lines))]
+        # else:
+            # pos_grids = merge_lines(pos_grids, lines, True if i == N - 1 else False)
 
 
-        print(len(pos_lines))
+        # print(len(pos_grids))
+
+
+    # Expanding square technique
+    i = 0
+    j = 0
+    pos_grids = pos[0][0]
+    while i < N - 1 or j < M - 1:
+        if j < M - 1:
+            j += 1
+
+            column = pos[0][j]
+            for ti in range(1, i + 1):
+                column = merge_lines(column, pos[ti][j], True if ti == N - 1 else False)
+
+
+            pos_grids = merge_possibility_in_line(pos_grids, column, True if j == M - 1 else False)
+
+
+        if i < j and i < N - 1:
+            i += 1
+
+            line = pos[i][0]
+            for tj in range(1, j + 1):
+                line = merge_possibility_in_line(line, pos[i][tj], True if tj == M - 1 else False)
+
+            pos_grids = merge_lines(pos_grids, line, True if i == N - 1 else False)
 
     # Return first solution if any
-    if len(pos_lines) == 0:
+    if len(pos_grids) == 0:
         return None
     else:
-        return pos_lines[0]
+        return pos_grids[0]
 
 
 
