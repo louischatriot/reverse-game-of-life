@@ -1,6 +1,19 @@
-from data import nw, ne, sw, se, w, n, e, s, center
 import time
+class Timer():
+    def __init__(self):
+        self.reset()
 
+    def reset(self):
+        self.start = time.time()
+
+    def time(self, message = ''):
+        duration = time.time() - self.start
+        print(f"{message} ===> Duration: {duration}")
+        self.reset()
+
+t = Timer()
+
+from data import nw, ne, sw, se, w, n, e, s, center
 
 
 
@@ -115,8 +128,7 @@ def merge_lines(lines1, lines2, total_merge = False):
 
 
 def find_predecessor(goal):
-    start = time.time()
-
+    t.reset()
 
     N = len(goal)
     M = len(goal[0])
@@ -131,6 +143,8 @@ def find_predecessor(goal):
     for i in range(1, N - 1):
         pos.append([w[goal[i][0]]] + [center[goal[i][j]] for j in range(1, M - 1)] + [e[goal[i][-1]]])
     pos.append([sw[goal[-1][0]]] + [s[goal[-1][j]] for j in range(1, M - 1)] + [se[goal[-1][-1]]])
+
+    t.time("Calculated predecessors")
 
     # Removing obvious non matches by looking around (ahead only for now) the cell
     _pos = []
@@ -153,10 +167,7 @@ def find_predecessor(goal):
     pos = _pos
 
 
-
-
-    print(f"===> Duration {time.time() - start}")
-    start = time.time()
+    t.time("Optimized predecessors")
 
 
 
@@ -204,7 +215,7 @@ def find_predecessor(goal):
 
         print(len(pos_grids))
 
-    print(f"===> Duration {time.time() - start}")
+    t.time("Calculated full predecessors")
 
     # Return first solution if any
     if len(pos_grids) == 0:
