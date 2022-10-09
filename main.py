@@ -2,6 +2,9 @@ from data import nw, ne, sw, se, w, n, e, s, center
 import time
 
 
+
+
+
 def print_grid(input):
     M = len(input[0])
     print('-' * (2 * M - 1))
@@ -65,11 +68,6 @@ def next(input):
 
 
 def check_cols(N, l, c):
-    # print(N)
-    # print(l)
-    # print(c)
-
-
     for i in range(0, N):
         if l[i][-2] != c[i][0]:
             return False
@@ -117,6 +115,9 @@ def merge_lines(lines1, lines2, total_merge = False):
 
 
 def find_predecessor(goal):
+    start = time.time()
+
+
     N = len(goal)
     M = len(goal[0])
 
@@ -130,6 +131,35 @@ def find_predecessor(goal):
     for i in range(1, N - 1):
         pos.append([w[goal[i][0]]] + [center[goal[i][j]] for j in range(1, M - 1)] + [e[goal[i][-1]]])
     pos.append([sw[goal[-1][0]]] + [s[goal[-1][j]] for j in range(1, M - 1)] + [se[goal[-1][-1]]])
+
+    # Removing obvious non matches by looking around (ahead only for now) the cell
+    _pos = []
+    for i in range(0, N):
+        line = []
+        for j in range(0, M):
+            pos_cell = []
+            for c in pos[i][j]:
+                if j == M - 1:
+                    pos_cell.append(c)
+                else:
+                    for cc in pos[i][j+1]:
+                        if check_cols(len(c), c, cc):
+                            pos_cell.append(c)
+                            break
+
+            line.append(pos_cell)
+        _pos.append(line)
+
+    pos = _pos
+
+
+
+
+    print(f"===> Duration {time.time() - start}")
+    start = time.time()
+
+
+
 
     # Calculating line by line
     # for i in range(0, N):
@@ -172,11 +202,68 @@ def find_predecessor(goal):
 
             pos_grids = merge_lines(pos_grids, line, True if i == N - 1 else False)
 
+        print(len(pos_grids))
+
+    print(f"===> Duration {time.time() - start}")
+
     # Return first solution if any
     if len(pos_grids) == 0:
         return None
     else:
         return pos_grids[0]
+
+
+
+
+# start = time.time()
+
+
+# centers = center[0] + center[1]
+# center_predecessors = { 0: [i for i in range(0, len(center[0]))], 1: [i for i in range(len(center[0]), len(centers))] }
+
+# center_transitions = [[False] * len(centers) for i in range(0, len(centers))]
+# for i in range(0, len(centers)):
+    # for j in range(0, len(centers)):
+        # if check_cols(3, centers[i], centers[j]):
+            # center_transitions[i][j] = True
+
+
+
+# goal = [0, 0, 0, 1, 1, 0, 0]
+# M = len(goal)
+
+
+# line = [[i] for i in center_predecessors[goal[0]]]
+
+# for j in range(1, 2):
+    # _line = []
+
+    # for l in line:
+        # for c in center_predecessors[goal[j]]:
+            # if center_transitions[l[-1]][c]:
+                # print("============================")
+                # print_grid(centers[l[-1]])
+                # print_grid(centers[c])
+
+
+
+                # _line.append(l + [c])
+
+    # line = _line
+
+    # print(len(line))
+
+
+
+
+
+
+
+
+
+# print(time.time() - start)
+
+# 1/0
 
 
 
