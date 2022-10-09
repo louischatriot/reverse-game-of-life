@@ -151,13 +151,24 @@ def find_predecessor(goal):
     for i in range(0, N):
         line = []
         for j in range(0, M):
+            # Right look-ahead
             pos_cell = []
             for c in pos[i][j]:
                 if j == M - 1:
                     pos_cell.append(c)
                 else:
-                    for cc in pos[i][j+1]:
+                    for cc in pos[i][j + 1]:
                         if check_cols(len(c), c, cc):
+                            pos_cell.append(c)
+                            break
+
+            # Bottom look-ahead
+            if i != N - 1:
+                _pos_cell = pos_cell
+                pos_cell = []
+                for c in _pos_cell:
+                    for cc in pos[i + 1][j]:
+                        if c[-2] == cc[0] and c[-1] == cc[1]:
                             pos_cell.append(c)
                             break
 
@@ -285,6 +296,16 @@ goal = [
     [0, 0, 1, 1, 0],
     [1, 1, 1, 1, 0],
     [0, 0, 1, 1, 1]
+]
+
+goal = [
+    # [1,1,1,1,1,1],
+    # [1,1,1,1,1,1],
+    # [1,1,1,1,1,1],
+    [1,1,1,1,1,1],
+    [1,1,1,1,1,1],
+    [1,1,1,1,1,1],
+    [1,1,1,1,1,1]
 ]
 
 
