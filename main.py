@@ -286,9 +286,14 @@ def find_predecessor(goal):
     pg_se = expanding_square_solve(pos_se)
 
 
+    pg_ne = flip_j(pg_ne)
+    pg_sw = flip_i(pg_sw)
+    pg_se = flip_i(flip_j(pg_se))
 
+    pg_n = merge_on_col(pg_nw, pg_ne)
+    pg_s = merge_on_col(pg_sw, pg_se)
 
-
+    pos_grids = merge_lines(pg_n, pg_s)
 
     t.time("Calculated full predecessors")
 
