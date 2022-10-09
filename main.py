@@ -80,7 +80,9 @@ def next(input):
     return output
 
 
-def check_cols(N, l, c):
+def check_cols(l, c):
+    N = len(l)
+
     for i in range(0, N):
         if l[i][-2] != c[i][0]:
             return False
@@ -91,7 +93,7 @@ def check_cols(N, l, c):
 
 
 # total_merge means we arrive at the end of the line so we don't increase grid length
-def merge_possibility_in_line(pos_lines, cells, total_merge = False):
+def merge_on_col(pos_lines, cells, total_merge = False):
     N = len(cells[0])
     res = []
 
@@ -101,9 +103,9 @@ def merge_possibility_in_line(pos_lines, cells, total_merge = False):
     for c in cells:
         for l in pos_lines:
 
-            if check_cols(N, l, c):
+            if check_cols(l, c):
                 if not total_merge:
-                    _l = [l[i] + [c[i][2]] for i in range(0, N)]
+                    _l = [l[i] + c[i][2:] for i in range(0, N)]
                     res.append(_l)
                 else:
                     res.append(l)
@@ -118,8 +120,7 @@ def merge_lines(lines1, lines2, total_merge = False):
         for l2 in lines2:
             if l1[-2] == l2[0] and l1[-1] == l2[1]:
                 if not total_merge:
-                    l = [_l for _l in l1]
-                    l.append(l2[2])
+                    l = [_l for _l in l1] + l2[2:]
                     res.append(l)
                 else:
                     res.append(l1)
@@ -137,12 +138,39 @@ def find_predecessor(goal):
     N += 2
     M += 2
 
+    motifs_center = {}
+    motifs_n = {}
+    motifs_s = {}
+
+    for a in [0, 1]:
+        for b in [0, 1]:
+            motifs_center[str(a) + str(b)] = merge_on_col(center[a], center[b])
+            motifs_n[str(a) + str(b)] = merge_on_col(n[a], n[b])
+            motifs_s[str(a) + str(b)] = merge_on_col(s[a], s[b])
+
+    t.time("Precalculated motifs")
+
     # All possible predecessors per cell in the goal
     pos = []
     pos.append([nw[goal[0][0]]] + [n[goal[0][j]] for j in range(1, M - 1)] + [ne[goal[0][-1]]])
     for i in range(1, N - 1):
         pos.append([w[goal[i][0]]] + [center[goal[i][j]] for j in range(1, M - 1)] + [e[goal[i][-1]]])
     pos.append([sw[goal[-1][0]]] + [s[goal[-1][j]] for j in range(1, M - 1)] + [se[goal[-1][-1]]])
+
+
+
+
+    # pos = []
+    # pos.append([nw[goal[0][0]]] + [motifs_n[str(goal[0][j]) + str(goal[0][j + 1])] for j in range(1, M - 1, 2)] + [ne[goal[0][-1]]])
+    # for i in range(1, N - 1):
+        # pos.append([w[goal[i][0]]] + [motifs_center[str(goal[i][j]) + str(goal[i][j + 1])] for j in range(1, M - 1, 2)] + [e[goal[i][-1]]])
+    # pos.append([sw[goal[-1][0]]] + [motifs_s[str(goal[-1][j]) + str(goal[-1][j + 1])] for j in range(1, M - 1, 2)] + [se[goal[-1][-1]]])
+
+
+    # N = len(pos)
+    # M = len(pos[0])
+
+
 
     t.time("Calculated predecessors")
 
@@ -158,7 +186,7 @@ def find_predecessor(goal):
                     pos_cell.append(c)
                 else:
                     for cc in pos[i][j + 1]:
-                        if check_cols(len(c), c, cc):
+                        if check_cols(c, cc):
                             pos_cell.append(c)
                             break
 
@@ -177,9 +205,7 @@ def find_predecessor(goal):
 
     pos = _pos
 
-
     t.time("Optimized predecessors")
-
 
 
 
@@ -188,7 +214,7 @@ def find_predecessor(goal):
         # lines = pos[i][0]
 
         # for j in range(1, M):
-            # lines = merge_possibility_in_line(lines, pos[i][j], True if j == M - 1 else False)
+            # lines = merge_on_col(lines, pos[i][j], True if j == M - 1 else False)
 
         # if i == 0:
             # pos_grids = [[l for l in lines[i]] for i in range(0, len(lines))]
@@ -200,31 +226,69 @@ def find_predecessor(goal):
 
 
     # Expanding square technique
-    i = 0
-    j = 0
-    pos_grids = pos[0][0]
-    while i < N - 1 or j < M - 1:
-        if j < M - 1:
-            j += 1
+    def expanding_square_solve(pos):
+        NP = len(pos)
+        MP = len(pos[0])
 
-            column = pos[0][j]
-            for ti in range(1, i + 1):
-                column = merge_lines(column, pos[ti][j], True if ti == N - 1 else False)
+        i = 0
+        j = 0
+        pos_grids = pos[0][0]
+        while i < NP - 1 or j < MP - 1:
+            if j < MP - 1:
+                j += 1
+
+                column = pos[0][j]
+                for ti in range(1, i + 1):
+                    column = merge_lines(column, pos[ti][j], True if ti == N - 1 else False)
 
 
-            pos_grids = merge_possibility_in_line(pos_grids, column, True if j == M - 1 else False)
+                pos_grids = merge_on_col(pos_grids, column, True if j == M - 1 else False)
 
 
-        if i < j and i < N - 1:
-            i += 1
+            if i < NP - 1:
+                i += 1
 
-            line = pos[i][0]
-            for tj in range(1, j + 1):
-                line = merge_possibility_in_line(line, pos[i][tj], True if tj == M - 1 else False)
+                line = pos[i][0]
+                for tj in range(1, j + 1):
+                    line = merge_on_col(line, pos[i][tj], True if tj == M - 1 else False)
 
-            pos_grids = merge_lines(pos_grids, line, True if i == N - 1 else False)
+                pos_grids = merge_lines(pos_grids, line, True if i == N - 1 else False)
 
-        print(len(pos_grids))
+        return pos_grids
+
+
+    def flip_i(m):
+        return [m[i] for i in range(len(m) - 1, -1, -1)]
+
+
+    def flip_j(m):
+        return [[m[i][j] for j in range(len(m[i]) - 1, -1, -1)] for i in range(0, len(m))]
+
+
+
+    # pos_grids = expanding_square_solve(pos)
+
+    c_i = N // 2
+    c_j = M // 2
+
+    pos_nw = [pos[i][0:c_j] for i in range(0, c_i)]
+    pos_ne = [pos[i][c_j:] for i in range(0, c_i)]
+    pos_sw = [pos[i][0:c_j] for i in range(c_i, N)]
+    pos_se = [pos[i][c_j:] for i in range(c_i, N)]
+
+    pos_ne = flip_j(pos_ne)
+    pos_sw = flip_i(pos_sw)
+    pos_se = flip_i(flip_j(pos_se))
+
+    pg_nw = expanding_square_solve(pos_nw)
+    pg_ne = expanding_square_solve(pos_ne)
+    pg_sw = expanding_square_solve(pos_sw)
+    pg_se = expanding_square_solve(pos_se)
+
+
+
+
+
 
     t.time("Calculated full predecessors")
 
@@ -246,7 +310,7 @@ def find_predecessor(goal):
 # center_transitions = [[False] * len(centers) for i in range(0, len(centers))]
 # for i in range(0, len(centers)):
     # for j in range(0, len(centers)):
-        # if check_cols(3, centers[i], centers[j]):
+        # if check_cols(centers[i], centers[j]):
             # center_transitions[i][j] = True
 
 
@@ -293,20 +357,20 @@ def find_predecessor(goal):
 
 
 goal = [
-    [0, 0, 1, 1, 0],
-    [1, 1, 1, 1, 0],
-    [0, 0, 1, 1, 1]
+    [0, 0, 1, 1, 0, 0],
+    [1, 1, 1, 1, 0, 1],
+    [0, 0, 1, 1, 1, 1]
 ]
 
-goal = [
+# goal = [
+    # # [1,1,1,1,1,1],
+    # # [1,1,1,1,1,1],
+    # # [1,1,1,1,1,1],
     # [1,1,1,1,1,1],
     # [1,1,1,1,1,1],
     # [1,1,1,1,1,1],
-    [1,1,1,1,1,1],
-    [1,1,1,1,1,1],
-    [1,1,1,1,1,1],
-    [1,1,1,1,1,1]
-]
+    # [1,1,1,1,1,1]
+# ]
 
 
 # goal = [
