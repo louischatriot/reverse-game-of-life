@@ -83,6 +83,18 @@ def next(input):
     return output
 
 
+def flip_i(m):
+    return [m[i] for i in range(len(m) - 1, -1, -1)]
+
+
+def flip_j(m):
+    return [[m[i][j] for j in range(len(m[i]) - 1, -1, -1)] for i in range(0, len(m))]
+
+
+def flip_ij(m):
+    return [[m[i][j] for j in range(len(m[i]) - 1, -1, -1)] for i in range(len(m) - 1, -1, -1)]
+
+
 def check_cols(l, c):
     N = len(l)
 
@@ -140,6 +152,40 @@ def final_merge_lines(lines1, lines2):
     return None
 
 
+# Caching look ahead on the right and bottom
+real_centers = [ [[None, None], [None, None]], [[None, None], [None, None]] ]
+for cv in [0, 1]:
+    for c in center[c]:
+
+
+
+        for r in [0, 1]:
+            pass
+
+
+        for b in [0, 1]:
+            pass
+
+
+
+            pos_cell = []
+            for c in pos[i][j]:
+                for cc in pos[i][j + 1]:
+                    if check_cols(c, cc):
+                        pos_cell.append(c)
+                        break
+
+            # Bottom look-ahead
+            if i != N - 1:
+                _pos_cell = pos_cell
+                pos_cell = []
+                for c in _pos_cell:
+                    for cc in pos[i + 1][j]:
+                        if c[-2] == cc[0] and c[-1] == cc[1]:
+                            pos_cell.append(c)
+                            break
+
+
 
 def find_predecessor(goal):
     t.reset()
@@ -185,9 +231,10 @@ def find_predecessor(goal):
 
 
 
-    t.time("Calculated predecessors")
+    t.time("Structured predecessors")
 
     # Removing obvious non matches by looking around (ahead only for now) the cell
+    # Doing for SE to NW does not yield any benefit compared to NW to SE, strangely
     _pos = []
     for i in range(0, N):
         line = []
@@ -268,18 +315,6 @@ def find_predecessor(goal):
                 pos_grids = merge_lines(pos_grids, line, True if i == N - 1 else False)
 
         return pos_grids
-
-
-    def flip_i(m):
-        return [m[i] for i in range(len(m) - 1, -1, -1)]
-
-
-    def flip_j(m):
-        return [[m[i][j] for j in range(len(m[i]) - 1, -1, -1)] for i in range(0, len(m))]
-
-
-    def flip_ij(m):
-        return [[m[i][j] for j in range(len(m[i]) - 1, -1, -1)] for i in range(len(m) - 1, -1, -1)]
 
 
 
