@@ -128,6 +128,16 @@ def merge_lines(lines1, lines2, total_merge = False):
     return res
 
 
+def final_merge_lines(lines1, lines2):
+    for l1 in lines1:
+        for l2 in lines2:
+            if l1[-2] == l2[0] and l1[-1] == l2[1]:
+                return [_l for _l in l1] + l2[2:]
+
+    return None
+
+
+
 def find_predecessor(goal):
     t.reset()
 
@@ -291,6 +301,7 @@ def find_predecessor(goal):
     pg_se = expanding_square_solve(pos_se)
 
 
+    # Could merge in the reverse order to save these flips
     pg_ne = [flip_j(s) for s in pg_ne]
     pg_sw = [flip_i(s) for s in pg_sw]
     pg_se = [flip_ij(s) for s in pg_se]
@@ -299,15 +310,18 @@ def find_predecessor(goal):
     pg_n = merge_on_col(pg_nw, pg_ne)
     pg_s = merge_on_col(pg_sw, pg_se)
 
-    pos_grids = merge_lines(pg_n, pg_s)
+    res = final_merge_lines(pg_n, pg_s)
 
     t.time("Calculated full predecessors")
 
+    # Return the solution if any
+    return res
+
     # Return first solution if any
-    if len(pos_grids) == 0:
-        return None
-    else:
-        return pos_grids[0]
+    # if len(pos_grids) == 0:
+        # return None
+    # else:
+        # return pos_grids[0]
 
 
 
