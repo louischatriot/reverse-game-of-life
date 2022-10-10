@@ -1,3 +1,7 @@
+from data import nw, ne, sw, se, w, n, e, s, center
+
+
+
 import time
 class Timer():
     def __init__(self):
@@ -13,7 +17,6 @@ class Timer():
 
 t = Timer()
 
-from data import nw, ne, sw, se, w, n, e, s, center
 
 
 
@@ -388,9 +391,9 @@ goal = [
 ]
 
 # goal = [
-    # # [1,1,1,1,1,1],
-    # # [1,1,1,1,1,1],
-    # # [1,1,1,1,1,1],
+    # [1,1,1,1,1,1],
+    # [1,1,1,1,1,1],
+    # [1,1,1,1,1,1],
     # [1,1,1,1,1,1],
     # [1,1,1,1,1,1],
     # [1,1,1,1,1,1],
