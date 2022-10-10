@@ -138,17 +138,17 @@ def find_predecessor(goal):
     N += 2
     M += 2
 
-    motifs_center = {}
-    motifs_n = {}
-    motifs_s = {}
+    # motifs_center = {}
+    # motifs_n = {}
+    # motifs_s = {}
 
-    for a in [0, 1]:
-        for b in [0, 1]:
-            motifs_center[str(a) + str(b)] = merge_on_col(center[a], center[b])
-            motifs_n[str(a) + str(b)] = merge_on_col(n[a], n[b])
-            motifs_s[str(a) + str(b)] = merge_on_col(s[a], s[b])
+    # for a in [0, 1]:
+        # for b in [0, 1]:
+            # motifs_center[str(a) + str(b)] = merge_on_col(center[a], center[b])
+            # motifs_n[str(a) + str(b)] = merge_on_col(n[a], n[b])
+            # motifs_s[str(a) + str(b)] = merge_on_col(s[a], s[b])
 
-    t.time("Precalculated motifs")
+    # t.time("Precalculated motifs")
 
     # All possible predecessors per cell in the goal
     pos = []
@@ -265,6 +265,11 @@ def find_predecessor(goal):
         return [[m[i][j] for j in range(len(m[i]) - 1, -1, -1)] for i in range(0, len(m))]
 
 
+    def flip_ij(m):
+        return [[m[i][j] for j in range(len(m[i]) - 1, -1, -1)] for i in range(len(m) - 1, -1, -1)]
+
+
+
 
     # pos_grids = expanding_square_solve(pos)
 
@@ -286,9 +291,10 @@ def find_predecessor(goal):
     pg_se = expanding_square_solve(pos_se)
 
 
-    pg_ne = flip_j(pg_ne)
-    pg_sw = flip_i(pg_sw)
-    pg_se = flip_i(flip_j(pg_se))
+    pg_ne = [flip_j(s) for s in pg_ne]
+    pg_sw = [flip_i(s) for s in pg_sw]
+    pg_se = [flip_ij(s) for s in pg_se]
+
 
     pg_n = merge_on_col(pg_nw, pg_ne)
     pg_s = merge_on_col(pg_sw, pg_se)
