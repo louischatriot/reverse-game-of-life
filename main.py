@@ -155,35 +155,24 @@ def final_merge_lines(lines1, lines2):
 # Caching look ahead on the right and bottom
 real_centers = [ [[None, None], [None, None]], [[None, None], [None, None]] ]
 for cv in [0, 1]:
-    for c in center[c]:
-
-
-
-        for r in [0, 1]:
-            pass
-
-
-        for b in [0, 1]:
-            pass
-
-
-
+    for rv in [0, 1]:
+        for bv in [0, 1]:
             pos_cell = []
-            for c in pos[i][j]:
-                for cc in pos[i][j + 1]:
-                    if check_cols(c, cc):
+            for c in center[cv]:
+                for r in center[rv]:
+                    if check_cols(c, r):
                         pos_cell.append(c)
                         break
 
-            # Bottom look-ahead
-            if i != N - 1:
-                _pos_cell = pos_cell
-                pos_cell = []
-                for c in _pos_cell:
-                    for cc in pos[i + 1][j]:
-                        if c[-2] == cc[0] and c[-1] == cc[1]:
-                            pos_cell.append(c)
-                            break
+            _pos_cell = pos_cell
+            pos_cell = []
+            for c in _pos_cell:
+                for b in center[bv]:
+                    if c[-2] == b[0] and c[-1] == b[1]:
+                        pos_cell.append(c)
+                        break
+
+            real_centers[cv][rv][bv] = pos_cell
 
 
 
@@ -235,6 +224,41 @@ def find_predecessor(goal):
 
     # Removing obvious non matches by looking around (ahead only for now) the cell
     # Doing for SE to NW does not yield any benefit compared to NW to SE, strangely
+
+    """
+    _pos = [[None] * M for i in range(0, N)]
+
+    for i in range(0, N):
+        _pos[i][M - 1] = pos[i][M - 1]
+
+    for j in range(0, M):
+        _pos[N - 1][j] = pos[N - 1][j]
+
+
+    for i in range(N - 2, -1, -1):
+        for j in range(M - 2, -1, -1):
+            pos_cell = []
+            for c in pos[i][j]:
+                for cc in pos[i][j + 1]:
+                    if check_cols(c, cc):
+                        pos_cell.append(c)
+                        break
+
+            _pos_cell = pos_cell
+            pos_cell = []
+            for c in _pos_cell:
+                for cc in pos[i + 1][j]:
+                    if c[-2] == cc[0] and c[-1] == cc[1]:
+                        pos_cell.append(c)
+                        break
+
+            _pos[i][j] = pos_cell
+
+    pos = _pos
+    # """
+
+
+    # """
     _pos = []
     for i in range(0, N):
         line = []
@@ -264,6 +288,7 @@ def find_predecessor(goal):
         _pos.append(line)
 
     pos = _pos
+    # """
 
     t.time("Optimized predecessors")
 
@@ -321,6 +346,7 @@ def find_predecessor(goal):
 
     # pos_grids = expanding_square_solve(pos)
 
+
     c_i = N // 2
     c_j = M // 2
 
@@ -338,12 +364,10 @@ def find_predecessor(goal):
     pg_sw = expanding_square_solve(pos_sw)
     pg_se = expanding_square_solve(pos_se)
 
-
     # Could merge in the reverse order to save these flips
     pg_ne = [flip_j(s) for s in pg_ne]
     pg_sw = [flip_i(s) for s in pg_sw]
     pg_se = [flip_ij(s) for s in pg_se]
-
 
     pg_n = merge_on_col(pg_nw, pg_ne)
     pg_s = merge_on_col(pg_sw, pg_se)
@@ -425,16 +449,24 @@ goal = [
     [0, 0, 1, 1, 1, 1]
 ]
 
-# goal = [
-    # [1,1,1,1,1,1],
-    # [1,1,1,1,1,1],
-    # [1,1,1,1,1,1],
-    # [1,1,1,1,1,1],
-    # [1,1,1,1,1,1],
-    # [1,1,1,1,1,1],
-    # [1,1,1,1,1,1]
-# ]
+goal = [
+    [1,1,1,1,1,1],
+    [1,1,1,1,1,1],
+    [1,1,1,1,1,1],
+    [1,1,1,1,1,1],
+    [1,1,1,1,1,1],
+    [1,1,1,1,1,1],
+    [1,1,1,1,1,1]
+]
 
+
+goal = [
+    [0, 0, 1, 0],
+    [1, 0, 0, 1],
+    [0, 0, 0, 1],
+    [1, 0, 0, 1],
+    [0, 0, 1, 0]
+]
 
 # goal = [
     # [1, 1, 1, 1, 1],
