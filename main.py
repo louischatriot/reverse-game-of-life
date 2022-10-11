@@ -152,6 +152,21 @@ def final_merge_lines(lines1, lines2):
     return None
 
 
+def eq(c1, c2):
+    N = len(c1)
+    M = len(c1[0])
+
+    if len(c2) != N or len(c2[0]) != M:
+        return False
+
+    for i in range(0, N):
+        for j in range(0, M):
+            if c1[i][j] != c2[i][j]:
+                return False
+
+    return True
+
+
 # Caching look ahead on the right and bottom
 real_centers = [ [[None, None], [None, None]], [[None, None], [None, None]] ]
 for cv in [0, 1]:
@@ -173,6 +188,11 @@ for cv in [0, 1]:
                         break
 
             real_centers[cv][rv][bv] = pos_cell
+
+
+def srep(c):
+    return ''.join([''.join(map(str, c[i])) for i in range(0, len(c))])
+
 
 
 
@@ -258,11 +278,23 @@ def find_predecessor(goal):
     # """
 
 
+
     # """
     _pos = []
+    _pos = [[None] * M for i in range(0, N)]
+
     for i in range(0, N):
-        line = []
+        _pos[i][M - 1] = pos[i][M - 1]
+
+    for j in range(0, M):
+        _pos[N - 1][j] = pos[N - 1][j]
+
+    for i in range(0, N):
         for j in range(0, M):
+            if i > 0 and j > 0 and i < N - 2 and j < M - 2:
+                _pos[i][j] = real_centers[goal[i][j]][goal[i][j + 1]][goal[i + 1][j]]
+                continue
+
             # Right look-ahead
             pos_cell = []
             for c in pos[i][j]:
@@ -283,9 +315,7 @@ def find_predecessor(goal):
                         if c[-2] == cc[0] and c[-1] == cc[1]:
                             pos_cell.append(c)
                             break
-
-            line.append(pos_cell)
-        _pos.append(line)
+            _pos[i][j] = pos_cell
 
     pos = _pos
     # """
@@ -460,13 +490,24 @@ goal = [
 ]
 
 
-goal = [
+goal1 = [
     [0, 0, 1, 0],
     [1, 0, 0, 1],
     [0, 0, 0, 1],
     [1, 0, 0, 1],
     [0, 0, 1, 0]
 ]
+
+goal = [
+    [0,1,1,1,1,0],
+    [0,0,0,1,0,1],
+    [1,0,0,1,1,1],
+    [0,1,1,1,1,1]
+]
+
+
+
+
 
 # goal = [
     # [1, 1, 1, 1, 1],
