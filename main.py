@@ -190,10 +190,83 @@ for cv in [0, 1]:
             real_centers[cv][rv][bv] = pos_cell
 
 
+# Caching look ahead on the left, right and bottom
+real_centers_rbl = [[[[None, None], [None, None]], [[None, None], [None, None]]] , [[[None, None], [None, None]], [[None, None], [None, None]]]]
+for cv in [0, 1]:
+    for rv in [0, 1]:
+        for bv in [0, 1]:
+            for lv in [0, 1]:
+                pos_cell = []
+                for c in center[cv]:
+                    for r in center[rv]:
+                        if check_cols(c, r):
+                            pos_cell.append(c)
+                            break
+
+                _pos_cell = pos_cell
+                pos_cell = []
+                for c in _pos_cell:
+                    for b in center[bv]:
+                        if c[-2] == b[0] and c[-1] == b[1]:
+                            pos_cell.append(c)
+                            break
+
+                _pos_cell = pos_cell
+                pos_cell = []
+                for c in _pos_cell:
+                    for l in center[lv]:
+                        if check_cols(l, c):
+                            pos_cell.append(c)
+                            break
+
+                real_centers_rbl[cv][rv][bv][lv] = pos_cell
+
+
+# Caching look ahead on the left, right, bottom and up
+real_centers_rblu = [[[[[None, None], [None, None]], [[None, None], [None, None]]] , [[[None, None], [None, None]], [[None, None], [None, None]]]], [[[[None, None], [None, None]], [[None, None], [None, None]]] , [[[None, None], [None, None]], [[None, None], [None, None]]]]]
+for cv in [0, 1]:
+    for rv in [0, 1]:
+        for bv in [0, 1]:
+            for lv in [0, 1]:
+                for uv in [0, 1]:
+                    pos_cell = []
+                    for c in center[cv]:
+                        for r in center[rv]:
+                            if check_cols(c, r):
+                                pos_cell.append(c)
+                                break
+
+                    _pos_cell = pos_cell
+                    pos_cell = []
+                    for c in _pos_cell:
+                        for b in center[bv]:
+                            if c[-2] == b[0] and c[-1] == b[1]:
+                                pos_cell.append(c)
+                                break
+
+                    _pos_cell = pos_cell
+                    pos_cell = []
+                    for c in _pos_cell:
+                        for l in center[lv]:
+                            if check_cols(l, c):
+                                pos_cell.append(c)
+                                break
+
+                    _pos_cell = pos_cell
+                    pos_cell = []
+                    for c in _pos_cell:
+                        for u in center[uv]:
+                            if u[-2] == c[0] and u[-1] == c[1]:
+                                pos_cell.append(c)
+                                break
+
+                    real_centers_rblu[cv][rv][bv][lv][uv] = pos_cell
+
+
+
+
 def srep(c):
     return ''.join([''.join(map(str, c[i])) for i in range(0, len(c))])
-
-
 
 
 def find_predecessor(goal):
@@ -291,6 +364,14 @@ def find_predecessor(goal):
 
     for i in range(0, N):
         for j in range(0, M):
+            if i > 1 and j > 1 and i < N - 2 and j < M - 2:
+                _pos[i][j] = real_centers_rblu[goal[i][j]][goal[i][j + 1]][goal[i + 1][j]][goal[i][j - 1]][goal[i - 1][j]]
+                continue
+
+            if i > 0 and j > 1 and i < N - 2 and j < M - 2:
+                _pos[i][j] = real_centers_rbl[goal[i][j]][goal[i][j + 1]][goal[i + 1][j]][goal[i][j - 1]]
+                continue
+
             if i > 0 and j > 0 and i < N - 2 and j < M - 2:
                 _pos[i][j] = real_centers[goal[i][j]][goal[i][j + 1]][goal[i + 1][j]]
                 continue
@@ -476,10 +557,11 @@ def find_predecessor(goal):
 goal = [
     [0, 0, 1, 1, 0, 0],
     [1, 1, 1, 1, 0, 1],
-    [0, 0, 1, 1, 1, 1]
+    [0, 0, 1, 1, 1, 1],
+    [1, 1, 1, 1, 0, 1]
 ]
 
-goal = [
+goal1 = [
     [1,1,1,1,1,1],
     [1,1,1,1,1,1],
     [1,1,1,1,1,1],
@@ -498,7 +580,7 @@ goal1 = [
     [0, 0, 1, 0]
 ]
 
-goal = [
+goal1 = [
     [0,1,1,1,1,0],
     [0,0,0,1,0,1],
     [1,0,0,1,1,1],
