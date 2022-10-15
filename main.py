@@ -20,7 +20,6 @@ t = Timer()
 
 
 
-
 def print_grid(input):
     M = len(input[0])
     print('-' * (2 * M - 1))
@@ -105,6 +104,7 @@ def check_cols(l, c):
             return False
 
     return True
+
 
 
 # total_merge means we arrive at the end of the line so we don't increase grid length
@@ -454,9 +454,10 @@ def find_predecessor(goal):
 
 
 
-
     pos_grids = expanding_square_solve(pos)
+    t.time("Calculated full predecessors")
     print(len(pos_grids))
+    1/0
     return pos_grids
 
 
@@ -483,11 +484,21 @@ def find_predecessor(goal):
     pg_se = [flip_ij(s) for s in pg_se]
 
     pg_n = merge_on_col(pg_nw, pg_ne)
+
+
+    print(c_i)
+    print(len(pg_n))
+    1/0
+
+
     pg_s = merge_on_col(pg_sw, pg_se)
 
-    res = final_merge_lines(pg_n, pg_s)
+    # res = final_merge_lines(pg_n, pg_s)
+    res = merge_lines(pg_n, pg_s)
 
     t.time("Calculated full predecessors")
+    print(len(res))
+    1/0
 
     # Return the solution if any
     return res
@@ -564,31 +575,38 @@ goal = [
     [1, 0, 1, 1, 0, 0]
 ]
 
-goal1 = [
-    [1,1,1,1,1,1],
-    [1,1,1,1,1,1],
-    [1,1,1,1,1,1],
-    [1,1,1,1,1,1],
-    [1,1,1,1,1,1],
-    [1,1,1,1,1,1],
-    [1,1,1,1,1,1]
+# UPPER HALF
+goal = [
+    [0, 0, 1, 1, 0, 0],
+    [1, 1, 1, 1, 0, 1],
+    [0, 0, 1, 0, 1, 1]
 ]
 
+# goal1 = [
+    # [1,1,1,1,1,1],
+    # [1,1,1,1,1,1],
+    # [1,1,1,1,1,1],
+    # [1,1,1,1,1,1],
+    # [1,1,1,1,1,1],
+    # [1,1,1,1,1,1],
+    # [1,1,1,1,1,1]
+# ]
 
-goal1 = [
-    [0, 0, 1, 0],
-    [1, 0, 0, 1],
-    [0, 0, 0, 1],
-    [1, 0, 0, 1],
-    [0, 0, 1, 0]
-]
 
-goal1 = [
-    [0,1,1,1,1,0],
-    [0,0,0,1,0,1],
-    [1,0,0,1,1,1],
-    [0,1,1,1,1,1]
-]
+# goal1 = [
+    # [0, 0, 1, 0],
+    # [1, 0, 0, 1],
+    # [0, 0, 0, 1],
+    # [1, 0, 0, 1],
+    # [0, 0, 1, 0]
+# ]
+
+# goal1 = [
+    # [0,1,1,1,1,0],
+    # [0,0,0,1,0,1],
+    # [1,0,0,1,1,1],
+    # [0,1,1,1,1,1]
+# ]
 
 
 
@@ -615,7 +633,7 @@ r = []
 for t in res:
     a = ''.join([''.join(map(str, l)) for l in t])
     r.append(a)
-    print_grid(next(t))
+    print_grid(t)
 
 
 print(r)
