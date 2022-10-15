@@ -455,7 +455,9 @@ def find_predecessor(goal):
 
 
 
-    # pos_grids = expanding_square_solve(pos)
+    pos_grids = expanding_square_solve(pos)
+    print(len(pos_grids))
+    return pos_grids
 
 
     c_i = N // 2
@@ -557,8 +559,9 @@ def find_predecessor(goal):
 goal = [
     [0, 0, 1, 1, 0, 0],
     [1, 1, 1, 1, 0, 1],
-    [0, 0, 1, 1, 1, 1],
-    [1, 1, 1, 1, 0, 1]
+    [0, 0, 1, 0, 1, 1],
+    [1, 1, 0, 1, 0, 1],
+    [1, 0, 1, 1, 0, 0]
 ]
 
 goal1 = [
@@ -605,9 +608,21 @@ res = find_predecessor(goal)
 duration = time.time() - start
 print(f"===> Duration: {duration}")
 
-
-
 print_grid(goal)
+
+r = []
+
+for t in res:
+    a = ''.join([''.join(map(str, l)) for l in t])
+    r.append(a)
+    print_grid(next(t))
+
+
+print(r)
+print(len(r))
+print(len(set(r)))
+
+
 print_grid(res)
 print_grid(next(res))
 
