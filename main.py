@@ -106,6 +106,48 @@ def check_cols(l, c):
     return True
 
 
+def check_rows(l1, l2):
+    return l1[-2] == l2[0] and l1[-1] == l2[1]
+
+
+
+# nw = nw[0]
+# n = n[0]
+# w = w[0]
+
+
+# test = w[0]
+
+
+
+
+
+# print(len(test))
+
+# _test = []
+# for c in test:
+    # if any(check_rows(c, cc) for cc in test):
+        # _test.append(c)
+    # print("==========================")
+    # print_grid(c)
+    # for cc in n:
+        # if check_cols(c, cc):
+            # print_grid(cc)
+            # break
+
+
+
+
+# test = _test
+
+# print(len(test))
+
+
+
+
+
+# 1/0
+
 
 # total_merge means we arrive at the end of the line so we don't increase grid length
 def merge_on_col(pos_lines, cells, total_merge = False):
@@ -191,76 +233,76 @@ for cv in [0, 1]:
 
 
 # Caching look ahead on the left, right and bottom
-real_centers_rbl = [[[[None, None], [None, None]], [[None, None], [None, None]]] , [[[None, None], [None, None]], [[None, None], [None, None]]]]
-for cv in [0, 1]:
-    for rv in [0, 1]:
-        for bv in [0, 1]:
-            for lv in [0, 1]:
-                pos_cell = []
-                for c in center[cv]:
-                    for r in center[rv]:
-                        if check_cols(c, r):
-                            pos_cell.append(c)
-                            break
+# real_centers_rbl = [[[[None, None], [None, None]], [[None, None], [None, None]]] , [[[None, None], [None, None]], [[None, None], [None, None]]]]
+# for cv in [0, 1]:
+    # for rv in [0, 1]:
+        # for bv in [0, 1]:
+            # for lv in [0, 1]:
+                # pos_cell = []
+                # for c in center[cv]:
+                    # for r in center[rv]:
+                        # if check_cols(c, r):
+                            # pos_cell.append(c)
+                            # break
 
-                _pos_cell = pos_cell
-                pos_cell = []
-                for c in _pos_cell:
-                    for b in center[bv]:
-                        if c[-2] == b[0] and c[-1] == b[1]:
-                            pos_cell.append(c)
-                            break
+                # _pos_cell = pos_cell
+                # pos_cell = []
+                # for c in _pos_cell:
+                    # for b in center[bv]:
+                        # if c[-2] == b[0] and c[-1] == b[1]:
+                            # pos_cell.append(c)
+                            # break
 
-                _pos_cell = pos_cell
-                pos_cell = []
-                for c in _pos_cell:
-                    for l in center[lv]:
-                        if check_cols(l, c):
-                            pos_cell.append(c)
-                            break
+                # _pos_cell = pos_cell
+                # pos_cell = []
+                # for c in _pos_cell:
+                    # for l in center[lv]:
+                        # if check_cols(l, c):
+                            # pos_cell.append(c)
+                            # break
 
-                real_centers_rbl[cv][rv][bv][lv] = pos_cell
+                # real_centers_rbl[cv][rv][bv][lv] = pos_cell
 
 
-# Caching look ahead on the left, right, bottom and up
-real_centers_rblu = [[[[[None, None], [None, None]], [[None, None], [None, None]]] , [[[None, None], [None, None]], [[None, None], [None, None]]]], [[[[None, None], [None, None]], [[None, None], [None, None]]] , [[[None, None], [None, None]], [[None, None], [None, None]]]]]
-for cv in [0, 1]:
-    for rv in [0, 1]:
-        for bv in [0, 1]:
-            for lv in [0, 1]:
-                for uv in [0, 1]:
-                    pos_cell = []
-                    for c in center[cv]:
-                        for r in center[rv]:
-                            if check_cols(c, r):
-                                pos_cell.append(c)
-                                break
+# # Caching look ahead on the left, right, bottom and up
+# real_centers_rblu = [[[[[None, None], [None, None]], [[None, None], [None, None]]] , [[[None, None], [None, None]], [[None, None], [None, None]]]], [[[[None, None], [None, None]], [[None, None], [None, None]]] , [[[None, None], [None, None]], [[None, None], [None, None]]]]]
+# for cv in [0, 1]:
+    # for rv in [0, 1]:
+        # for bv in [0, 1]:
+            # for lv in [0, 1]:
+                # for uv in [0, 1]:
+                    # pos_cell = []
+                    # for c in center[cv]:
+                        # for r in center[rv]:
+                            # if check_cols(c, r):
+                                # pos_cell.append(c)
+                                # break
 
-                    _pos_cell = pos_cell
-                    pos_cell = []
-                    for c in _pos_cell:
-                        for b in center[bv]:
-                            if c[-2] == b[0] and c[-1] == b[1]:
-                                pos_cell.append(c)
-                                break
+                    # _pos_cell = pos_cell
+                    # pos_cell = []
+                    # for c in _pos_cell:
+                        # for b in center[bv]:
+                            # if c[-2] == b[0] and c[-1] == b[1]:
+                                # pos_cell.append(c)
+                                # break
 
-                    _pos_cell = pos_cell
-                    pos_cell = []
-                    for c in _pos_cell:
-                        for l in center[lv]:
-                            if check_cols(l, c):
-                                pos_cell.append(c)
-                                break
+                    # _pos_cell = pos_cell
+                    # pos_cell = []
+                    # for c in _pos_cell:
+                        # for l in center[lv]:
+                            # if check_cols(l, c):
+                                # pos_cell.append(c)
+                                # break
 
-                    _pos_cell = pos_cell
-                    pos_cell = []
-                    for c in _pos_cell:
-                        for u in center[uv]:
-                            if u[-2] == c[0] and u[-1] == c[1]:
-                                pos_cell.append(c)
-                                break
+                    # _pos_cell = pos_cell
+                    # pos_cell = []
+                    # for c in _pos_cell:
+                        # for u in center[uv]:
+                            # if u[-2] == c[0] and u[-1] == c[1]:
+                                # pos_cell.append(c)
+                                # break
 
-                    real_centers_rblu[cv][rv][bv][lv][uv] = pos_cell
+                    # real_centers_rblu[cv][rv][bv][lv][uv] = pos_cell
 
 
 
@@ -294,7 +336,7 @@ def find_predecessor(goal):
     # All possible predecessors per cell in the goal
     pos = []
     pos.append([nw[goal[0][0]]] + [n[goal[0][j]] for j in range(1, M - 1)] + [ne[goal[0][-1]]])
-    for i in range(1, N - 1):
+    for i in range(0, N):
         pos.append([w[goal[i][0]]] + [center[goal[i][j]] for j in range(1, M - 1)] + [e[goal[i][-1]]])
     pos.append([sw[goal[-1][0]]] + [s[goal[-1][j]] for j in range(1, M - 1)] + [se[goal[-1][-1]]])
 
@@ -364,13 +406,13 @@ def find_predecessor(goal):
 
     for i in range(0, N):
         for j in range(0, M):
-            if i > 1 and j > 1 and i < N - 2 and j < M - 2:
-                _pos[i][j] = real_centers_rblu[goal[i][j]][goal[i][j + 1]][goal[i + 1][j]][goal[i][j - 1]][goal[i - 1][j]]
-                continue
+            # if i > 1 and j > 1 and i < N - 2 and j < M - 2:
+                # _pos[i][j] = real_centers_rblu[goal[i][j]][goal[i][j + 1]][goal[i + 1][j]][goal[i][j - 1]][goal[i - 1][j]]
+                # continue
 
-            if i > 0 and j > 1 and i < N - 2 and j < M - 2:
-                _pos[i][j] = real_centers_rbl[goal[i][j]][goal[i][j + 1]][goal[i + 1][j]][goal[i][j - 1]]
-                continue
+            # if i > 0 and j > 1 and i < N - 2 and j < M - 2:
+                # _pos[i][j] = real_centers_rbl[goal[i][j]][goal[i][j + 1]][goal[i + 1][j]][goal[i][j - 1]]
+                # continue
 
             if i > 0 and j > 0 and i < N - 2 and j < M - 2:
                 _pos[i][j] = real_centers[goal[i][j]][goal[i][j + 1]][goal[i + 1][j]]
@@ -457,7 +499,6 @@ def find_predecessor(goal):
     pos_grids = expanding_square_solve(pos)
     t.time("Calculated full predecessors")
     print(len(pos_grids))
-    1/0
     return pos_grids
 
 
@@ -498,7 +539,6 @@ def find_predecessor(goal):
 
     t.time("Calculated full predecessors")
     print(len(res))
-    1/0
 
     # Return the solution if any
     return res
@@ -571,16 +611,15 @@ goal = [
     [0, 0, 1, 1, 0, 0],
     [1, 1, 1, 1, 0, 1],
     [0, 0, 1, 0, 1, 1],
-    [1, 1, 0, 1, 0, 1],
-    [1, 0, 1, 1, 0, 0]
+    [1, 1, 0, 1, 0, 1]
 ]
 
 # UPPER HALF
-goal = [
-    [0, 0, 1, 1, 0, 0],
-    [1, 1, 1, 1, 0, 1],
-    [0, 0, 1, 0, 1, 1]
-]
+# goal = [
+    # [0, 0, 1, 1, 0, 0],
+    # [1, 1, 1, 1, 0, 1],
+    # [0, 0, 1, 0, 1, 1]
+# ]
 
 # goal1 = [
     # [1,1,1,1,1,1],
@@ -628,54 +667,11 @@ print(f"===> Duration: {duration}")
 
 print_grid(goal)
 
-r = []
-
-for t in res:
-    a = ''.join([''.join(map(str, l)) for l in t])
-    r.append(a)
-    print_grid(t)
-
-
-print(r)
-print(len(r))
-print(len(set(r)))
-
+res = res[0]
 
 print_grid(res)
 print_grid(next(res))
 
 
-
-
-# input = [
-    # [0, 1, 0, 0],
-    # [0, 0, 1, 0],
-    # [1, 1, 1, 0],
-    # [0, 0, 0, 0]
-# ]
-
-# print_grid(input)
-
-# print("==========================")
-
-# input = next(input)
-
-# print_grid(input)
-
-# print("==========================")
-
-# input = next(input)
-
-# print_grid(input)
-
-# print("==========================")
-
-# input = next(input)
-
-# print_grid(input)
-
-# print("==========================")
-
-# input = next(input)
 
 
