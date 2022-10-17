@@ -73,6 +73,34 @@ def hash(c):
     return n
 
 
+def get_neighbors(input, i, j):
+    N = len(input)
+    M = len(input[0])
+
+    neighbors = 0
+    for oi in [-1, 0, 1]:
+        for oj in [-1, 0, 1]:
+            if oi != 0 or oj != 0:
+                if i + oi >= 0 and i + oi < N:
+                    if j + oj >= 0 and j + oj < M:
+                        neighbors += input[i + oi][j + oj]
+
+    return neighbors
+
+
+def get_next(input, i, j):
+    neighbors = get_neighbors(input, i, j)
+
+    if neighbors == 3:
+        return 1
+    elif neighbors == 2:
+        return input[i][j]
+    else:
+        return 0
+
+
+
+
 t.reset()
 
 p = generate_all_predecessors(3, 3)
@@ -101,55 +129,39 @@ for i in range(0, np):
     next_b.append(s)
 
 
-t.time("Preparation done")
-
-
-def get_neighbors(input, i, j):
-    N = len(input)
-    M = len(input[0])
-
-    neighbors = 0
-    for oi in [-1, 0, 1]:
-        for oj in [-1, 0, 1]:
-            if oi != 0 or oj != 0:
-                if i + oi >= 0 and i + oi < N:
-                    if j + oj >= 0 and j + oj < M:
-                        neighbors += input[i + oi][j + oj]
-
-    return neighbors
-
-
-def get_next(input, i, j):
-    neighbors = get_neighbors(input, i, j)
-
-    if neighbors == 3:
-        return 1
-    elif neighbors == 2:
-        return input[i][j]
-    else:
-        return 0
-
-
 center = [
     {i for i in range(0, np) if get_next(cor[i], 1, 1) == 0},
     {i for i in range(0, np) if get_next(cor[i], 1, 1) == 1}
 ]
 
 
-nw = [i for i in range(0, np) if get_next(cor[i], 0, 0) == 0]
-nw = [i for i in nw if get_next(cor[i], 0, 1) == 0]
-nw = [i for i in nw if get_next(cor[i], 1, 0) == 0]
+nw = set(range(0, np))
+nw = {i for i in nw if get_next(cor[i], 0, 0) == 0}
+nw = {i for i in nw if get_next(cor[i], 0, 1) == 0}
+nw = {i for i in nw if get_next(cor[i], 1, 0) == 0}
 
-n = [i for i in range(0, np) if get_next(cor[i], 0, 1) == 0]
+ne = set(range(0, np))
+ne = {i for i in ne if get_next(cor[i], 0, 2) == 0}
+ne = {i for i in ne if get_next(cor[i], 1, 2) == 0}
+ne = {i for i in ne if get_next(cor[i], 0, 1) == 0}
 
+se = set(range(0, np))
+se = {i for i in se if get_next(cor[i], 2, 2) == 0}
+se = {i for i in se if get_next(cor[i], 2, 1) == 0}
+se = {i for i in se if get_next(cor[i], 1, 2) == 0}
 
-# n = [i for i in n if any(check_cols(cor[j], cor[i]) for j in nw)]
+sw = set(range(0, np))
+sw = {i for i in sw if get_next(cor[i], 2, 0) == 0}
+sw = {i for i in sw if get_next(cor[i], 1, 0) == 0}
+sw = {i for i in sw if get_next(cor[i], 2, 1) == 0}
 
-# nw = [i for i in nw if any(check_cols(cor[i], cor[j]) for j in n)]
+n = {i for i in range(0, np) if get_next(cor[i], 0, 1) == 0}
+e = {i for i in range(0, np) if get_next(cor[i], 1, 2) == 0}
+s = {i for i in range(0, np) if get_next(cor[i], 2, 1) == 0}
+w = {i for i in range(0, np) if get_next(cor[i], 1, 0) == 0}
 
-# w = [i for i in range(0, np) if get_next(cor[i], 1, 0) == 0]
+t.time("Preparation done")
 
-# w = [i for i in w if any(check_rows(cor[j], cor[i]) for j in nw)]
 
 
 
@@ -192,17 +204,27 @@ def find_predecessor(goal):
     N = len(goal)
     M = len(goal[0])
 
+    # Grid of possibilities
     pos = [[None] * M for i in range(0, N)]
-
     for i in range(0, N):
         for j in range(0, M):
             pos[i][j] = center[goal[i][j]]
 
+    # Setting boundary conditions
     pos[0][0] = pos[0][0].intersection(nw)
+    pos[0][-1] = pos[0][-1].intersection(ne)
+    pos[-1][-1] = pos[-1][-1].intersection(se)
+    pos[-1][0] = pos[-1][0].intersection(sw)
 
     for j in range(1, M-1):
         pos[0][j] = pos[0][j].intersection(n)
+        pos[-1][j] = pos[-1][j].intersection(s)
 
+    for i in range(1, N-1):
+        pos[i][0] = pos[i][0].intersection(w)
+        pos[i][-1] = pos[i][-1].intersection(e)
+
+    # Recursively search following the expanding squares path
     def search(pos, indexes, idx):
         NI = len(indexes)
 
@@ -231,7 +253,12 @@ def find_predecessor(goal):
         return None
 
 
-    return search(pos, get_index(N, M), 0)
+    res = search(pos, get_index(N, M), 0)
+
+    if res i None:
+        return None
+
+
 
 
 
