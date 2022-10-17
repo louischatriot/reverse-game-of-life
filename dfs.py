@@ -178,30 +178,13 @@ def get_index(N, M):
             for ii in range(0, i+1):
                 idx.append((ii, j))
 
-
         if i < N-1:
             i += 1
 
             for jj in range(0, j+1):
                 idx.append((i, jj))
 
-
-
-
     return idx
-
-
-
-idx = get_index(3, 5)
-
-print(len(idx))
-
-
-for i in idx:
-    print(i)
-
-
-1/0
 
 
 
@@ -220,7 +203,35 @@ def find_predecessor(goal):
     for j in range(1, M-1):
         pos[0][j] = pos[0][j].intersection(n)
 
+    def search(pos, indexes, idx):
+        NI = len(indexes)
 
+        if idx == NI - 1:
+            if len(pos[N-1][M-1]) > 0:
+                return pos
+            else:
+                return None
+
+        i, j = indexes[idx]
+
+        for c in pos[i][j]:
+            _pos = clone_pos(pos)
+            _pos[i][j] = [c]
+
+            if i < N-1:
+                _pos[i+1][j] = _pos[i+1][j].intersection(next_b[c])
+
+            if j < M-1:
+                _pos[i][j+1] = _pos[i][j+1].intersection(next_r[c])
+
+            r = search(_pos, indexes, idx+1)
+            if r is not None:
+                return r
+
+        return None
+
+
+    return search(pos, get_index(N, M), 0)
 
 
 
@@ -238,9 +249,13 @@ goal = [
     [1, 1, 1, 1, 0, 1]
 ]
 
+
 res = find_predecessor(goal)
 
 t.time("Found one predecessor")
 
+
+for l in res:
+    print(l)
 
 
