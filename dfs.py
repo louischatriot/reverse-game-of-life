@@ -255,13 +255,40 @@ def find_predecessor(goal):
 
     res = search(pos, get_index(N, M), 0)
 
-    if res i None:
+    if res is None:
         return None
 
+    resc = None
+
+    print(resc)
+
+    for cc in res[0]:
+        c = cor[cc[0]]
+
+        if resc is None:
+            resc = [[it for it in l] for l in c]
+        else:
+            for i in range(0, 3):
+                resc[i].append(c[i][2])
 
 
 
+    for i in range(1, N):
+        c = cor[res[i][0][0]]
+        l = [c[2][0], c[2][1], c[2][2]]
 
+        for j in range(0, M):
+            c = cor[list(res[i][j])[0]]
+            l.append(c[2][2])
+
+        resc.append(l)
+
+    print_grid(resc)
+
+    nu = next(resc)
+
+    print_grid(nu)
+    print_grid(goal)
 
 
 
@@ -282,7 +309,5 @@ res = find_predecessor(goal)
 t.time("Found one predecessor")
 
 
-for l in res:
-    print(l)
 
 
