@@ -258,6 +258,32 @@ def find_predecessor(goal):
     if res is None:
         return None
 
+    print(res)
+
+    res = [[list(c)[0]   for c in l] for l in res]
+
+    print(res)
+
+    res = [[cor[c]  for c in l] for l in res]
+
+    print(res)
+
+    res = [[get_next(c, 1, 1)  for c in l] for l in res]
+
+    print(res)
+
+    print_grid(res)
+
+    1/0
+
+
+    aaa = [[next(cor[list(c)[0]], 1, 1) for c in l] for l in res]
+
+    print_grid(aaa)
+    1/0
+
+
+
     resc = None
 
     print(resc)
