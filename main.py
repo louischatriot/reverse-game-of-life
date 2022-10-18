@@ -110,45 +110,6 @@ def check_rows(l1, l2):
     return l1[-2] == l2[0] and l1[-1] == l2[1]
 
 
-
-# nw = nw[0]
-# n = n[0]
-# w = w[0]
-
-
-# test = w[0]
-
-
-
-
-
-# print(len(test))
-
-# _test = []
-# for c in test:
-    # if any(check_rows(c, cc) for cc in test):
-        # _test.append(c)
-    # print("==========================")
-    # print_grid(c)
-    # for cc in n:
-        # if check_cols(c, cc):
-            # print_grid(cc)
-            # break
-
-
-
-
-# test = _test
-
-# print(len(test))
-
-
-
-
-
-# 1/0
-
-
 # total_merge means we arrive at the end of the line so we don't increase grid length
 def merge_on_col(pos_lines, cells, total_merge = False):
     N = len(cells[0])
@@ -232,6 +193,25 @@ for cv in [0, 1]:
             real_centers[cv][rv][bv] = pos_cell
 
 
+# Caching look ahead on the right and bottom
+real_centers_lu = [ [[None, None], [None, None]], [[None, None], [None, None]] ]
+for cv in [0, 1]:
+    for lv in [0, 1]:
+        for uv in [0, 1]:
+            pos_cell = []
+            for c in center[cv]:
+                if any(check_rows(u, c) for u in center[uv]):
+                    pos_cell.append(c)
+
+            _pos_cell = pos_cell
+            pos_cell = []
+            for c in _pos_cell:
+                if any(check_cols(l, c) for l in center[lv]):
+                    pos_cell.append(c)
+
+            real_centers_lu[cv][lv][uv] = pos_cell
+
+
 # Caching look ahead on the left, right and bottom
 # real_centers_rbl = [[[[None, None], [None, None]], [[None, None], [None, None]]] , [[[None, None], [None, None]], [[None, None], [None, None]]]]
 # for cv in [0, 1]:
@@ -306,7 +286,6 @@ for cv in [0, 1]:
 
 
 
-
 def srep(c):
     return ''.join([''.join(map(str, c[i])) for i in range(0, len(c))])
 
@@ -317,22 +296,6 @@ def find_predecessor(goal):
     N = len(goal)
     M = len(goal[0])
 
-    goal = [[0 for i in range(0, M + 2)]] + [[0] + goal[i] + [0] for i in range(0,N)] + [[0 for i in range(0, M + 2)]]
-    N += 2
-    M += 2
-
-    # motifs_center = {}
-    # motifs_n = {}
-    # motifs_s = {}
-
-    # for a in [0, 1]:
-        # for b in [0, 1]:
-            # motifs_center[str(a) + str(b)] = merge_on_col(center[a], center[b])
-            # motifs_n[str(a) + str(b)] = merge_on_col(n[a], n[b])
-            # motifs_s[str(a) + str(b)] = merge_on_col(s[a], s[b])
-
-    # t.time("Precalculated motifs")
-
     # All possible predecessors per cell in the goal
     pos = []
     pos.append([nw[goal[0][0]]] + [n[goal[0][j]] for j in range(1, M - 1)] + [ne[goal[0][-1]]])
@@ -341,68 +304,69 @@ def find_predecessor(goal):
     pos.append([sw[goal[-1][0]]] + [s[goal[-1][j]] for j in range(1, M - 1)] + [se[goal[-1][-1]]])
 
 
+        if i == 0:
+            pos[i][M-1] = center[goal[i][M-1]]
+        else:
+            pos[i][M-1] = real_centers_lu[goal[i][M-1]][goal[i][M-2]][goal[i-1][M-1]]
 
 
-    # pos = []
-    # pos.append([nw[goal[0][0]]] + [motifs_n[str(goal[0][j]) + str(goal[0][j + 1])] for j in range(1, M - 1, 2)] + [ne[goal[0][-1]]])
-    # for i in range(1, N - 1):
-        # pos.append([w[goal[i][0]]] + [motifs_center[str(goal[i][j]) + str(goal[i][j + 1])] for j in range(1, M - 1, 2)] + [e[goal[i][-1]]])
-    # pos.append([sw[goal[-1][0]]] + [motifs_s[str(goal[-1][j]) + str(goal[-1][j + 1])] for j in range(1, M - 1, 2)] + [se[goal[-1][-1]]])
-
-
-    # N = len(pos)
-    # M = len(pos[0])
+    pos[N-1][0] = center[goal[N-1][0]]
+    for j in range(1, M):
+        pos[N-1][j] = real_centers_lu[goal[N-1][j]][goal[N-1][j-1]][goal[N-2][j]]
 
 
 
     t.time("Structured predecessors")
 
-    # Removing obvious non matches by looking around (ahead only for now) the cell
-    # Doing for SE to NW does not yield any benefit compared to NW to SE, strangely
-
-    """
-    _pos = [[None] * M for i in range(0, N)]
-
-    for i in range(0, N):
-        _pos[i][M - 1] = pos[i][M - 1]
-
+    # N and S
     for j in range(0, M):
-        _pos[N - 1][j] = pos[N - 1][j]
+        pos_cell = []
+        for c in pos[0][j]:
+            if any(check_rows(cc, c) for cc in n[0]):
+                pos_cell.append(c)
+        pos[0][j] = pos_cell
 
+        pos_cell = []
+        for c in pos[N-1][j]:
+            if any(check_rows(c, cc) for cc in s[0]):
+                pos_cell.append(c)
+        pos[N-1][j] = pos_cell
 
-    for i in range(N - 2, -1, -1):
-        for j in range(M - 2, -1, -1):
-            pos_cell = []
-            for c in pos[i][j]:
-                for cc in pos[i][j + 1]:
-                    if check_cols(c, cc):
-                        pos_cell.append(c)
-                        break
-
-            _pos_cell = pos_cell
-            pos_cell = []
-            for c in _pos_cell:
-                for cc in pos[i + 1][j]:
-                    if c[-2] == cc[0] and c[-1] == cc[1]:
-                        pos_cell.append(c)
-                        break
-
-            _pos[i][j] = pos_cell
-
-    pos = _pos
-    # """
-
-
-
-    # """
-    _pos = []
-    _pos = [[None] * M for i in range(0, N)]
-
+    # W and E
     for i in range(0, N):
-        _pos[i][M - 1] = pos[i][M - 1]
+        pos_cell = []
+        for c in pos[i][0]:
+            if any(check_cols(cc, c) for cc in w[0]):
+                pos_cell.append(c)
+        pos[i][0] = pos_cell
 
-    for j in range(0, M):
-        _pos[N - 1][j] = pos[N - 1][j]
+        pos_cell = []
+        for c in pos[i][M-1]:
+            if any(check_cols(c, cc) for cc in e[0]):
+                pos_cell.append(c)
+        pos[i][M-1] = pos_cell
+
+
+
+    r = []
+    for c in pos[0][0]:
+        if any(c[0][0] == cc[0][0] and c[0][1] == cc[0][1] and c[1][0] == cc[1][0] and c[1][1] == cc[1][1] for cc in nw[0]):
+            r.append(c)
+    pos[0][0] = r
+
+    r = []
+    for c in pos[-1][-1]:
+        if any(c[-1][-1] == cc[-1][-1] and c[-2][-2] == cc[-2][-2] and c[-1][-2] == cc[-1][-2] and c[-2][-1] == cc[-2][-1] for cc in se[0]):
+            r.append(c)
+    pos[-1][-1] = r
+
+
+    t.time("Optimized predecessors")
+
+
+    r = pos[1][5]
+
+    print(len(r))
 
     for i in range(0, N):
         for j in range(0, M):
@@ -414,37 +378,9 @@ def find_predecessor(goal):
                 # _pos[i][j] = real_centers_rbl[goal[i][j]][goal[i][j + 1]][goal[i + 1][j]][goal[i][j - 1]]
                 # continue
 
-            if i > 0 and j > 0 and i < N - 2 and j < M - 2:
-                _pos[i][j] = real_centers[goal[i][j]][goal[i][j + 1]][goal[i + 1][j]]
-                continue
 
-            # Right look-ahead
-            pos_cell = []
-            for c in pos[i][j]:
-                if j == M - 1:
-                    pos_cell.append(c)
-                else:
-                    for cc in pos[i][j + 1]:
-                        if check_cols(c, cc):
-                            pos_cell.append(c)
-                            break
 
-            # Bottom look-ahead
-            if i != N - 1:
-                _pos_cell = pos_cell
-                pos_cell = []
-                for c in _pos_cell:
-                    for cc in pos[i + 1][j]:
-                        if c[-2] == cc[0] and c[-1] == cc[1]:
-                            pos_cell.append(c)
-                            break
-            _pos[i][j] = pos_cell
-
-    pos = _pos
-    # """
-
-    t.time("Optimized predecessors")
-
+    # pos[0][0] = [[[0,0,0], [0,0,0], [0,1,1]]]
 
 
     # Calculating line by line
@@ -477,10 +413,10 @@ def find_predecessor(goal):
 
                 column = pos[0][j]
                 for ti in range(1, i + 1):
-                    column = merge_lines(column, pos[ti][j], True if ti == N - 1 else False)
+                    column = merge_lines(column, pos[ti][j])
 
 
-                pos_grids = merge_on_col(pos_grids, column, True if j == M - 1 else False)
+                pos_grids = merge_on_col(pos_grids, column)
 
 
             if i < NP - 1:
@@ -488,9 +424,9 @@ def find_predecessor(goal):
 
                 line = pos[i][0]
                 for tj in range(1, j + 1):
-                    line = merge_on_col(line, pos[i][tj], True if tj == M - 1 else False)
+                    line = merge_on_col(line, pos[i][tj])
 
-                pos_grids = merge_lines(pos_grids, line, True if i == N - 1 else False)
+                pos_grids = merge_lines(pos_grids, line)
 
         return pos_grids
 
