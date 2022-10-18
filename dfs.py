@@ -320,15 +320,17 @@ def find_predecessor(goal):
 
                 if i < N-1:
                     _p[i+1][j] = _p[i+1][j].intersection(next_b[c])
+                    if len(_p[i+1][j]) == 0:
+                        continue
 
                 if j < M-1:
                     _p[i][j+1] = _p[i][j+1].intersection(next_r[c])
+                    if len(_p[i][j+1]) == 0:
+                        continue
 
                 states.append((_p, idx+1))
 
         return None
-
-
 
     # res = search(pos, get_index(N, M), 0)
     res = search_iter()
