@@ -1,3 +1,6 @@
+from collections import deque
+
+
 import time
 class Timer():
     def __init__(self):
@@ -179,6 +182,15 @@ def clone_pos(pos):
 
 
 def get_index(N, M):
+    # Linear is twice as slow as expanding square
+    # res = []
+    # for i in range(0, N):
+        # for j in range(0, M):
+            # res.append((i, j))
+
+    # return res
+
+
     idx = [(0, 0)]
 
     i = 0
@@ -279,8 +291,44 @@ def find_predecessor(goal):
 
         return None
 
+    def search_iter():
+        # states = []
+        states = deque()
+        indexes = get_index(N, M)
+        NI = len(indexes)
 
-    res = search(pos, get_index(N, M), 0)
+        states.append((pos, 0))
+
+        while len(states) > 0:
+            state = states.pop()
+            p = state[0]
+            idx = state[1]
+            i, j = indexes[idx]
+
+            if idx == NI - 1:
+                if len(p[i][j]) > 0:
+                    return p
+
+
+            for c in p[i][j]:
+                _p = clone_pos(p)
+
+                _p[i][j] = [c]
+
+                if i < N-1:
+                    _p[i+1][j] = _p[i+1][j].intersection(next_b[c])
+
+                if j < M-1:
+                    _p[i][j+1] = _p[i][j+1].intersection(next_r[c])
+
+                states.append((_p, idx+1))
+
+        return None
+
+
+
+    # res = search(pos, get_index(N, M), 0)
+    res = search_iter()
 
     if res is None:
         return None
@@ -301,7 +349,9 @@ goal = [
     [0, 0, 1, 1, 0, 0],
     [1, 1, 1, 1, 0, 1],
     [0, 0, 1, 1, 1, 1],
-    [1, 1, 1, 1, 0, 1]
+    [1, 1, 1, 1, 0, 1],
+    [1, 0, 1, 0, 0, 1],
+    [1, 1, 0, 1, 0, 1]
 ]
 
 
