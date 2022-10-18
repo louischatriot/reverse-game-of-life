@@ -1,6 +1,6 @@
-from collections import deque
-
-
+#
+# Utilities
+#
 import time
 class Timer():
     def __init__(self):
@@ -15,7 +15,6 @@ class Timer():
         self.reset()
 
 t = Timer()
-
 
 
 def print_grid(input):
@@ -102,8 +101,25 @@ def get_next(input, i, j):
         return 0
 
 
+# Clone an array of possibilities
+def clone_pos(pos):
+    N = len(pos)
+    M = len(pos[0])
+
+    clone = [[None] * M for i in range(0, N)]
+    for i in range(0, N):
+        for j in range(0, M):
+            clone[i][j] = pos[i][j].copy()
+
+    return clone
 
 
+
+# Generating
+# * Hash to 3x3 cell correspondence -> cor
+# * Propagation of possibilities to the right and the left -> next_r and next_b
+# * Possibilities for 3x3 cells -> center[0] and center[1] (not aptly named...)
+# * Boundary conditions -> nw, ne, se, sw, n, e, s, w
 t.reset()
 
 p = generate_all_predecessors(3, 3)
@@ -166,30 +182,16 @@ w = {i for i in range(0, np) if get_next(cor[i], 1, 0) == 0}
 t.time("Preparation done")
 
 
-
-
-
-def clone_pos(pos):
-    N = len(pos)
-    M = len(pos[0])
-
-    clone = [[None] * M for i in range(0, N)]
-    for i in range(0, N):
-        for j in range(0, M):
-            clone[i][j] = pos[i][j].copy()
-
-    return clone
-
-
+# Order in which we try the different cells ; we want to first try cells with not many possibilities
+# Hence not being purely linear but as an "expanding square"
 def get_index(N, M):
-    # Linear is twice as slow as expanding square
+    # Linear version commented out, it is twice slower as the expanding square below
     # res = []
     # for i in range(0, N):
         # for j in range(0, M):
             # res.append((i, j))
 
     # return res
-
 
     idx = [(0, 0)]
 
@@ -211,6 +213,7 @@ def get_index(N, M):
     return idx
 
 
+# From array of hashes to matrix of alive and dead cells
 def format_result(res):
     N = len(res)
     M = len(res[0])
@@ -291,9 +294,9 @@ def find_predecessor(goal):
 
         return None
 
+    # Iterative version of the above
     def search_iter():
-        # states = []
-        states = deque()
+        states = []
         indexes = get_index(N, M)
         NI = len(indexes)
 
