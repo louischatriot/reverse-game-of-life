@@ -199,6 +199,33 @@ def get_index(N, M):
     return idx
 
 
+def format_result(res):
+    N = len(res)
+    M = len(res[0])
+
+    res = [[list(c)[0]   for c in l] for l in res]
+    res = [[cor[c]  for c in l] for l in res]
+
+    # First line
+    resc = [[it for it in l] for l in res[0][0]]
+    for j in range(1, M):
+        resc[0].append(res[0][j][0][2])
+        resc[1].append(res[0][j][1][2])
+        resc[2].append(res[0][j][2][2])
+
+    # Other lines
+    for i in range(1, N):
+        c = res[i][0]
+        l = [c[2][0], c[2][1], c[2][2]]
+
+        for j in range(1, M):
+            c = res[i][j]
+            l.append(c[2][2])
+
+        resc.append(l)
+
+    return resc
+
 
 def find_predecessor(goal):
     N = len(goal)
@@ -257,64 +284,12 @@ def find_predecessor(goal):
 
     if res is None:
         return None
-
-    print(res)
-
-    res = [[list(c)[0]   for c in l] for l in res]
-
-    print(res)
-
-    res = [[cor[c]  for c in l] for l in res]
-
-    print(res)
-
-    res = [[get_next(c, 1, 1)  for c in l] for l in res]
-
-    print(res)
-
-    print_grid(res)
-
-    1/0
-
-
-    aaa = [[next(cor[list(c)[0]], 1, 1) for c in l] for l in res]
-
-    print_grid(aaa)
-    1/0
+    else:
+        return format_result(res)
 
 
 
-    resc = None
 
-    print(resc)
-
-    for cc in res[0]:
-        c = cor[cc[0]]
-
-        if resc is None:
-            resc = [[it for it in l] for l in c]
-        else:
-            for i in range(0, 3):
-                resc[i].append(c[i][2])
-
-
-
-    for i in range(1, N):
-        c = cor[res[i][0][0]]
-        l = [c[2][0], c[2][1], c[2][2]]
-
-        for j in range(0, M):
-            c = cor[list(res[i][j])[0]]
-            l.append(c[2][2])
-
-        resc.append(l)
-
-    print_grid(resc)
-
-    nu = next(resc)
-
-    print_grid(nu)
-    print_grid(goal)
 
 
 
@@ -335,5 +310,8 @@ res = find_predecessor(goal)
 t.time("Found one predecessor")
 
 
+print_grid(goal)
+print_grid(res)
+print_grid(next(res))
 
 
