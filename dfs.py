@@ -120,19 +120,7 @@ def get_next(input, i, j):
 
 # Clone an array of possibilities
 def clone_pos(pos):
-    # N = len(pos)
-    # M = len(pos[0])
-
     return [[c for c in l] for l in pos]
-
-
-    # clone = [[None] * M for i in range(0, N)]
-    # for i in range(0, N):
-        # for j in range(0, M):
-            # clone[i][j] = pos[i][j].copy()
-
-    # return clone
-
 
 
 # Generating
@@ -142,94 +130,16 @@ def clone_pos(pos):
 # * Boundary conditions -> nw, ne, se, sw, n, e, s, w
 t.reset()
 
-p = generate_all_predecessors(3, 3)
-np = len(p)
+cor = generate_all_predecessors(3, 3)
+np = len(cor)
 
-cor = [None] * np
 next_r = []
 next_b = []
 next_d = []
 next_rr = []
 
-
-for c in p:
-    cor[hash(c)] = c
-
-
-
-def others_b(i):
-    base = i << 3 >> 3
-    base = i & 0b111111000
-    return [i + o for o in range(0, 8)]
-
-
-
-
-next_r = [[j for j in range(0, np) if check_cols(cor[i], cor[j])] for i in range(0, np)]
-
-
-
-
-
-next_b = [others_b(i) for i in range(0, np) ]
-
-print(next_b[54])
-
-
-
-next_b_b = [[j for j in range(0, np) if check_rows(cor[i], cor[j])] for i in range(0, np) ]
-
-
-print(next_b[54])
-
-a = next_b[54]
-b = next_b_b[54]
-
-
-print(sum(a))
-print(sum(b))
-
-print(len(a))
-print(len(b))
-
-
-# for i in range(0, np):
-    # if sum(next_b[i]) != sum(next_b_b[i]):
-        # print(i)
-
-next_b = [[j for j in range(0, np) if check_rows(cor[i], cor[j])] for i in range(0, np) ]
-
-
-
-for i in range(0, np):
-    ci = cor[i]
-
-    # s = set()
-    # for j in range(0, np):
-        # if check_cols(ci, cor[j]):
-            # s.add(j)
-    # next_r.append(s)
-
-    # s = set()
-    # for j in range(0, np):
-        # if check_rows(ci, cor[j]):
-            # s.add(j)
-    # next_b.append(s)
-
-    s = set()
-    for j in range(0, np):
-        cj = cor[j]
-        if ci[1][1] == cj[0][0] and ci[1][2] == cj[0][1] and ci[2][1] == cj[1][0] and ci[2][2] == cj[1][1]:
-            s.add(j)
-    next_d.append(s)
-
-    # s = set()
-    # for j in range(0, np):
-        # cj = cor[j]
-        # if ci[0][2] == cj[0][0] and ci[1][2] == cj[1][0] and ci[2][2] == cj[2][0]:
-            # s.add(j)
-    # next_rr.append(s)
-
+next_r = [[((i & 0b011011011) << 1) + o1 * 0b001000000 + o2 * 0b000001000 + o3 * 0b000000001 for o1 in [0, 1] for o2 in [0, 1] for o3 in [0, 1]] for i in range(0, np)]
+next_b = [[((i & 0b000111111) << 3) + o for o in range(0, 8)] for i in range(0, np) ]
 
 center = [
     {i for i in range(0, np) if get_next(cor[i], 1, 1) == 0},
@@ -446,6 +356,9 @@ def find_predecessor(goal):
 
     # res = search(pos, get_index(N, M), 0)
     res = search_iter()
+
+
+    v = Timer()
 
     if res is None:
         return None
