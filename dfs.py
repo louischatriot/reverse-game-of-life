@@ -8,11 +8,28 @@ class Timer():
 
     def reset(self):
         self.start = time.time()
+        self.events = {}
+        self.current_events = {}
 
     def time(self, message = ''):
         duration = time.time() - self.start
         print(f"{message} ===> Duration: {duration}")
         self.reset()
+
+    def start_event(self, evt):
+        self.current_events[evt] = time.time()
+
+    def stop_event(self, evt):
+        if evt not in self.events:
+            self.events[evt] = (0, 0)
+
+        self.events[evt] = (self.events[evt][0] + time.time() - self.current_events[evt], self.events[evt][1] + 1)
+
+
+    def print_events(self):
+        for evt, v in self.events.items():
+            print(f"{evt} - avg {v[0] / v[1]} - total {v[0]} - number {v[1]}")
+
 
 t = Timer()
 
@@ -103,15 +120,18 @@ def get_next(input, i, j):
 
 # Clone an array of possibilities
 def clone_pos(pos):
-    N = len(pos)
-    M = len(pos[0])
+    # N = len(pos)
+    # M = len(pos[0])
 
-    clone = [[None] * M for i in range(0, N)]
-    for i in range(0, N):
-        for j in range(0, M):
-            clone[i][j] = pos[i][j].copy()
+    return [[c for c in l] for l in pos]
 
-    return clone
+
+    # clone = [[None] * M for i in range(0, N)]
+    # for i in range(0, N):
+        # for j in range(0, M):
+            # clone[i][j] = pos[i][j].copy()
+
+    # return clone
 
 
 
@@ -136,20 +156,65 @@ for c in p:
     cor[hash(c)] = c
 
 
+
+def others_b(i):
+    base = i << 3 >> 3
+    base = i & 0b111111000
+    return [i + o for o in range(0, 8)]
+
+
+
+
+next_r = [[j for j in range(0, np) if check_cols(cor[i], cor[j])] for i in range(0, np)]
+
+
+
+
+
+next_b = [others_b(i) for i in range(0, np) ]
+
+print(next_b[54])
+
+
+
+next_b_b = [[j for j in range(0, np) if check_rows(cor[i], cor[j])] for i in range(0, np) ]
+
+
+print(next_b[54])
+
+a = next_b[54]
+b = next_b_b[54]
+
+
+print(sum(a))
+print(sum(b))
+
+print(len(a))
+print(len(b))
+
+
+# for i in range(0, np):
+    # if sum(next_b[i]) != sum(next_b_b[i]):
+        # print(i)
+
+next_b = [[j for j in range(0, np) if check_rows(cor[i], cor[j])] for i in range(0, np) ]
+
+
+
 for i in range(0, np):
     ci = cor[i]
 
-    s = set()
-    for j in range(0, np):
-        if check_cols(ci, cor[j]):
-            s.add(j)
-    next_r.append(s)
+    # s = set()
+    # for j in range(0, np):
+        # if check_cols(ci, cor[j]):
+            # s.add(j)
+    # next_r.append(s)
 
-    s = set()
-    for j in range(0, np):
-        if check_rows(ci, cor[j]):
-            s.add(j)
-    next_b.append(s)
+    # s = set()
+    # for j in range(0, np):
+        # if check_rows(ci, cor[j]):
+            # s.add(j)
+    # next_b.append(s)
 
     s = set()
     for j in range(0, np):
@@ -320,18 +385,38 @@ def find_predecessor(goal):
 
         states.append((pos, 0))
 
+        u = Timer()
+
+
+
+
         while len(states) > 0:
+
+            # u.start_event("state pop")
+
             state = states.pop()
+
+
+
             p = state[0]
             idx = state[1]
             i, j = indexes[idx]
 
+            # u.stop_event("state pop")
+
             if idx == NI - 1:
                 if len(p[i][j]) > 0:
+                    u.print_events()
+
                     return p
 
             for c in p[i][j]:
+
+                # u.start_event("clone")
+
                 _p = clone_pos(p)
+
+                # u.stop_event("clone")
 
                 _p[i][j] = [c]
 
@@ -345,10 +430,10 @@ def find_predecessor(goal):
                     if len(_p[i][j+1]) == 0:
                         continue
 
-                if i < N-1 and j < M-1:
-                    _p[i+1][j+1] = _p[i+1][j+1].intersection(next_d[c])
-                    if len(_p[i+1][j+1]) == 0:
-                        continue
+                # if i < N-1 and j < M-1:
+                    # _p[i+1][j+1] = _p[i+1][j+1].intersection(next_d[c])
+                    # if len(_p[i+1][j+1]) == 0:
+                        # continue
 
                 # if j < M-2:
                     # _p[i][j+2] = _p[i][j+2].intersection(next_rr[c])
