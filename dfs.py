@@ -117,10 +117,9 @@ def get_next(input, i, j):
     else:
         return 0
 
-
 # Clone an array of possibilities
 def clone_pos(pos):
-    return [[c for c in l] for l in pos]
+    return [l.copy() for l in pos]
 
 
 # Generating
@@ -295,7 +294,7 @@ def find_predecessor(goal):
 
         states.append((pos, 0))
 
-        u = Timer()
+        # u = Timer()
 
 
 
@@ -314,29 +313,36 @@ def find_predecessor(goal):
 
             # u.stop_event("state pop")
 
+            # u.start_event("if")
             if idx == NI - 1:
                 if len(p[i][j]) > 0:
-                    u.print_events()
+                    # u.print_events()
 
                     return p
 
+            # u.stop_event("if")
+
             for c in p[i][j]:
 
+
                 # u.start_event("clone")
-
                 _p = clone_pos(p)
-
                 # u.stop_event("clone")
+
 
                 _p[i][j] = [c]
 
                 if i < N-1:
+                    # u.start_event("inter")
                     _p[i+1][j] = _p[i+1][j].intersection(next_b[c])
+                    # u.stop_event("inter")
                     if len(_p[i+1][j]) == 0:
                         continue
 
                 if j < M-1:
+                    # u.start_event("inter")
                     _p[i][j+1] = _p[i][j+1].intersection(next_r[c])
+                    # u.stop_event("inter")
                     if len(_p[i][j+1]) == 0:
                         continue
 
