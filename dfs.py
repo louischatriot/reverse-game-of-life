@@ -129,6 +129,7 @@ cor = [None] * np
 next_r = []
 next_b = []
 next_d = []
+next_rr = []
 
 
 for c in p:
@@ -153,9 +154,16 @@ for i in range(0, np):
     s = set()
     for j in range(0, np):
         cj = cor[j]
-        if ci[1][1] == cj[0][0] and ci[1][2] == cj [0][1] and ci[2][1] == cj[1][0] and ci[2][2] == cj[1][1]:
+        if ci[1][1] == cj[0][0] and ci[1][2] == cj[0][1] and ci[2][1] == cj[1][0] and ci[2][2] == cj[1][1]:
             s.add(j)
     next_d.append(s)
+
+    # s = set()
+    # for j in range(0, np):
+        # cj = cor[j]
+        # if ci[0][2] == cj[0][0] and ci[1][2] == cj[1][0] and ci[2][2] == cj[2][0]:
+            # s.add(j)
+    # next_rr.append(s)
 
 
 center = [
@@ -322,7 +330,6 @@ def find_predecessor(goal):
                 if len(p[i][j]) > 0:
                     return p
 
-
             for c in p[i][j]:
                 _p = clone_pos(p)
 
@@ -340,6 +347,13 @@ def find_predecessor(goal):
 
                 if i < N-1 and j < M-1:
                     _p[i+1][j+1] = _p[i+1][j+1].intersection(next_d[c])
+                    if len(_p[i+1][j+1]) == 0:
+                        continue
+
+                # if j < M-2:
+                    # _p[i][j+2] = _p[i][j+2].intersection(next_rr[c])
+                    # if len(_p[i][j+2]) == 0:
+                        # continue
 
                 states.append((_p, idx+1))
 
