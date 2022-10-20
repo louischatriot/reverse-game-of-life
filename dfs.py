@@ -209,32 +209,8 @@ def get_index(N, M):
 def format_result(res):
     N = len(res)
     M = len(res[0])
-
-    # res = [[list(c)[0]   for c in l] for l in res]
     res = [[cor[c]  for c in l] for l in res]
-
     return [res[0][0][i] + [res[0][j][i][2] for j in range(1, M)] for i in range(0, 3)] + [res[i][0][2] + [res[i][j][2][2]   for j in range(1, M)]   for i in range(1, N)]
-
-    # First line
-    # resc = [[it for it in l] for l in res[0][0]]
-    # for j in range(1, M):
-        # resc[0].append(res[0][j][0][2])
-        # resc[1].append(res[0][j][1][2])
-        # resc[2].append(res[0][j][2][2])
-
-
-    # # Other lines
-    # for i in range(1, N):
-        # c = res[i][0]
-        # l = [c[2][0], c[2][1], c[2][2]]
-
-        # for j in range(1, M):
-            # c = res[i][j]
-            # l.append(c[2][2])
-
-        # resc.append(l)
-
-    # return resc
 
 
 def find_predecessor(goal):
